@@ -66,6 +66,11 @@ public partial class MainWindow : Window, IComponentConnector
         ConsoleMsg msg = ConsoleMsg.Msg;
         msg.Message = $"{msg.Message}[INFO] Forza EmuWheel is ready to start...{Environment.NewLine}";
         ConsoleMsg.Msg.StartIsEnabled = true;
+
+        if (Environment.GetCommandLineArgs().Contains("--start"))
+        {
+          StartFeeder();
+        }
       }
     }
     catch (Exception ex)
@@ -181,6 +186,10 @@ public partial class MainWindow : Window, IComponentConnector
 
   private void Start_Click(object sender, RoutedEventArgs e)
   {
+    StartFeeder();
+  }
+  
+  private void StartFeeder() {
     ConsoleMsg msg = ConsoleMsg.Msg;
     msg.Message = $"{msg.Message}[INFO] Forza EmuWheel is running...{Environment.NewLine}";
     ConsoleMsg.Msg.StartIsEnabled = false;
