@@ -177,7 +177,7 @@ internal class FFB
         }
     }
 
-    private static void SendConstant(Joystick FFBDevice)
+    private static void SendConstant()
     {
         TypeSpecificParameters specificParameters = new ConstantForce();
         int num1 = (int)Math.Round(
@@ -244,7 +244,7 @@ internal class FFB
 
     private static bool SineGearShiftBug { get; set; }
 
-    private static void SendPeriodic(Joystick FFBDevice)
+    private static void SendPeriodic()
     {
         TypeSpecificParameters specificParameters = new PeriodicForce();
         specificParameters.As<PeriodicForce>().Magnitude = (int)FFBPacketHandler.PeriodicReport.Magnitude;
@@ -322,7 +322,7 @@ internal class FFB
         FFBPacketHandler.Op = new vJoy.FFB_EFF_OP();
     }
 
-    private static void SendCondition(Joystick FFBDevice)
+    private static void SendCondition()
     {
         TypeSpecificParameters specificParameters = new ConditionSet();
         specificParameters.As<ConditionSet>().Conditions = new SharpDX.DirectInput.Condition[1];
@@ -393,21 +393,21 @@ internal class FFB
         FFBPacketHandler.Op = new vJoy.FFB_EFF_OP();
     }
 
-    public static void SendFFBData(Joystick FFBDevice)
+    public static void SendFFBData()
     {
         switch (FFBPacketHandler.PacketType)
         {
             case FFBPType.PT_CTRLREP:
-                SendFFBControlData(FFBDevice);
+                SendFFBControlData();
                 return;
             case FFBPType.PT_EFOPREP:
             case FFBPType.PT_EFFREP:
-                SendFFBEffectData(FFBDevice);
+                SendFFBEffectData();
                 return;
         }
     }
 
-    private static void SendFFBControlData(Joystick FFBDevice)
+    private static void SendFFBControlData()
     {
         switch (FFBPacketHandler.Control)
         {
@@ -427,7 +427,7 @@ internal class FFB
         }
     }
 
-    private static void SendFFBEffectData(Joystick FFBDevice)
+    private static void SendFFBEffectData()
     {
         Debug.Assert(FFBPacketHandler.PacketType == FFBPType.PT_EFOPREP || FFBPacketHandler.PacketType == FFBPType.PT_EFFREP);
 
@@ -458,14 +458,14 @@ internal class FFB
         switch (FFBPacketHandler.EffectReport.EffectType)
         {
             case FFBEType.ET_SINE:
-                FFB.SendPeriodic(FFBDevice);
+                FFB.SendPeriodic();
                 break;
             case FFBEType.ET_CONST:
-                FFB.SendConstant(FFBDevice);
+                FFB.SendConstant();
                 break;
             case FFBEType.ET_DMPR:
             case FFBEType.ET_SPRNG:
-                FFB.SendCondition(FFBDevice);
+                FFB.SendCondition();
                 break;
         }
     }
