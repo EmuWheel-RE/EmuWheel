@@ -13,6 +13,7 @@
     <RootNamespace>Forza_EmuWheel</RootNamespace>
     <LangVersion>10</LangVersion>
     <Nullable>enable</Nullable>
+    <ApplicationIcon>forzaemu_darkgray3.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
