@@ -7,6 +7,7 @@
 using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using vJoyInterfaceWrap;
 
@@ -432,65 +433,78 @@ internal class FFB
 
     public static void SendFFBData(Joystick FFBDevice)
     {
-        if (FFBPacketHandler.PacketType.ToString() == "PT_NEWEFREP" ||
-            FFBPacketHandler.PacketType.ToString() == "PT_SMPLREP" ||
-            FFBPacketHandler.PacketType.ToString() == "PT_BLKFRREP" ||
-            FFBPacketHandler.PacketType.ToString() == "PT_BLKLDREP" ||
-            FFBPacketHandler.PacketType.ToString() == "PT_POOLREP")
-            return;
-        if (FFBPacketHandler.PacketType.ToString() == "PT_CTRLREP")
+        switch (FFBPacketHandler.PacketType)
         {
-            if (FFBPacketHandler.Control.ToString() == "CTRL_DEVRST")
+            case FFBPType.PT_CTRLREP:
+                SendFFBControlData(FFBDevice);
+                return;
+            case FFBPType.PT_EFOPREP:
+            case FFBPType.PT_EFFREP:
+                SendFFBEffectData(FFBDevice);
+                return;
+        }
+    }
+
+    private static void SendFFBControlData(Joystick FFBDevice)
+    {
+        switch (FFBPacketHandler.Control)
+        {
+            case FFB_CTRL.CTRL_DEVRST:
                 FFBDevice.SendForceFeedbackCommand(ForceFeedbackCommand.Reset);
-            else if (FFBPacketHandler.Control.ToString() == "CTRL_STOPALL")
+                return;
+            case FFB_CTRL.CTRL_STOPALL:
+            case FFB_CTRL.CTRL_DISACT:
                 FFBDevice.SendForceFeedbackCommand(ForceFeedbackCommand.StopAll);
-            else if (FFBPacketHandler.Control.ToString() == "CTRL_DISACT")
-                FFBDevice.SendForceFeedbackCommand(ForceFeedbackCommand.StopAll);
-            else if (FFBPacketHandler.Control.ToString() == "CTRL_DEVPAUSE")
-            {
+                return;
+            case FFB_CTRL.CTRL_DEVPAUSE:
                 FFBDevice.SendForceFeedbackCommand(ForceFeedbackCommand.Pause);
-            }
-            else
-            {
-                if (!(FFBPacketHandler.Control.ToString() == "CTRL_DEVCONT"))
-                    return;
+                return;
+            case FFB_CTRL.CTRL_DEVCONT:
                 FFBDevice.SendForceFeedbackCommand(ForceFeedbackCommand.Continue);
+                return;
+        }
+    }
+
+    private static void SendFFBEffectData(Joystick FFBDevice)
+    {
+        Debug.Assert(FFBPacketHandler.PacketType == FFBPType.PT_EFOPREP || FFBPacketHandler.PacketType == FFBPType.PT_EFFREP);
+
+        if (FFBPacketHandler.EffectReport.EffectType == FFBEType.ET_NONE)
+        {
+            return;
+        }
+
+        if (FFBPacketHandler.Op.EffectOp == FFBOP.EFF_STOP)
+        {
+            switch (FFBPacketHandler.EffectReport.EffectType)
+            {
+                case FFBEType.ET_CONST:
+                    FFB.ConstantEffect.Stop();
+                    break;
+                case FFBEType.ET_SINE:
+                    FFB.SineEffect.Stop();
+                    break;
+                case FFBEType.ET_DMPR:
+                    FFB.DamperEffect.Stop();
+                    break;
+                case FFBEType.ET_SPRNG:
+                    FFB.SpringEffect.Stop();
+                    break;
             }
         }
-        else
-        {
-            if (FFBPacketHandler.EffectReport.EffectType.ToString() == "ET_NONE")
-                return;
-            if ((FFBPacketHandler.PacketType.ToString() == "PT_EFOPREP" ||
-                 FFBPacketHandler.PacketType.ToString() == "PT_EFFREP") &&
-                FFBPacketHandler.Op.EffectOp.ToString() == "EFF_STOP")
-            {
-                if (FFBPacketHandler.EffectReport.EffectType.ToString() == "ET_CONST")
-                    FFB.ConstantEffect.Stop();
-                else if (FFBPacketHandler.EffectReport.EffectType.ToString() == "ET_SINE")
-                    FFB.SineEffect.Stop();
-                else if (FFBPacketHandler.EffectReport.EffectType.ToString() == "ET_DMPR")
-                    FFB.DamperEffect.Stop();
-                else if (FFBPacketHandler.EffectReport.EffectType.ToString() == "ET_SPRNG")
-                    FFB.SpringEffect.Stop();
-            }
 
-            if (!(FFBPacketHandler.PacketType.ToString() == "PT_EFOPREP") &&
-                !(FFBPacketHandler.PacketType.ToString() == "PT_EFFREP"))
-                return;
-            if (FFBPacketHandler.EffectReport.EffectType.ToString() == "ET_SINE")
+        switch (FFBPacketHandler.EffectReport.EffectType)
+        {
+            case FFBEType.ET_SINE:
                 FFB.SendPeriodic(FFBDevice);
-            else if (FFBPacketHandler.EffectReport.EffectType.ToString() == "ET_CONST")
-            {
+                break;
+            case FFBEType.ET_CONST:
                 FFB.SendConstant(FFBDevice);
-            }
-            else
-            {
-                if (!(FFBPacketHandler.EffectReport.EffectType.ToString() == "ET_DMPR") &&
-                    !(FFBPacketHandler.EffectReport.EffectType.ToString() == "ET_SPRNG"))
-                    return;
+                break;
+            case FFBEType.ET_DMPR:
+            case FFBEType.ET_SPRNG:
                 FFB.SendCondition(FFBDevice);
-            }
+                break;
         }
     }
 
