@@ -23,10 +23,6 @@ namespace Forza_EmuWheel;
 public partial class MainWindow : Window, IComponentConnector
 {
   private const string VJoyProductGuid = "bead1234000000000000504944564944";
-  internal System.Windows.Controls.Button Start;
-  internal TextBox console;
-  internal System.Windows.Controls.Button Stop;
-  private bool _contentLoaded;
 
   private static SharpDX.DirectInput.DirectInput DI { get; set; }
 
@@ -214,43 +210,5 @@ public partial class MainWindow : Window, IComponentConnector
       return;
     foreach (Device gameController in InputCollector.GameControllers)
       gameController.Unacquire();
-  }
-
-  [DebuggerNonUserCode]
-  [GeneratedCode("PresentationBuildTasks", "4.0.0.0")]
-  public void InitializeComponent()
-  {
-    if (this._contentLoaded)
-      return;
-    this._contentLoaded = true;
-    Application.LoadComponent((object) this, new Uri("/Forza EmuWheel;component/mainwindow.xaml", UriKind.Relative));
-  }
-
-  [DebuggerNonUserCode]
-  [GeneratedCode("PresentationBuildTasks", "4.0.0.0")]
-  [EditorBrowsable(EditorBrowsableState.Never)]
-  void IComponentConnector.Connect(int connectionId, object target)
-  {
-    switch (connectionId)
-    {
-      case 1:
-        ((Window) target).Closing += new CancelEventHandler(this.OnApplicationExit);
-        break;
-      case 2:
-        this.Start = (System.Windows.Controls.Button) target;
-        this.Start.Click += new RoutedEventHandler(this.Start_Click);
-        break;
-      case 3:
-        this.console = (TextBox) target;
-        this.console.TextChanged += new TextChangedEventHandler(this.Console_TextChanged);
-        break;
-      case 4:
-        this.Stop = (System.Windows.Controls.Button) target;
-        this.Stop.Click += new RoutedEventHandler(this.Stop_Click);
-        break;
-      default:
-        this._contentLoaded = true;
-        break;
-    }
   }
 }
