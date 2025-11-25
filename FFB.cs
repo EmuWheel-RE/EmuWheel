@@ -331,15 +331,16 @@ internal class FFB
             FFBPacketHandler.ConditionalReport.CenterPointOffset;
         float num1 = 1f;
         float num2 = 1f;
-        if (FFBPacketHandler.EffectReport.EffectType.ToString() == "ET_DMPR")
+        switch (FFBPacketHandler.EffectReport.EffectType)
         {
-            num1 = FFB.DamperCoefficient;
-            num2 = FFB.DamperSaturation;
-        }
-        else if (FFBPacketHandler.EffectReport.EffectType.ToString() == "ET_SPRNG")
-        {
-            num1 = FFB.SpringCoefficient;
-            num2 = FFB.SpringSaturation;
+            case FFBEType.ET_DMPR:
+                num1 = FFB.DamperCoefficient;
+                num2 = FFB.DamperSaturation;
+                break;
+            case FFBEType.ET_SPRNG:
+                num1 = FFB.SpringCoefficient;
+                num2 = FFB.SpringSaturation;
+                break;
         }
 
         int num3 = (int)Math.Round(FFBPacketHandler.ConditionalReport.PosCoeff * (double)num1, 0);
@@ -377,17 +378,18 @@ internal class FFB
         if (FFBPacketHandler.EffectReport.TrigerBtn == byte.MaxValue)
             effectParameters.TriggerButton = -1;
         effectParameters.TriggerRepeatInterval = FFBPacketHandler.EffectReport.TrigerRpt;
-        if (FFBPacketHandler.EffectReport.EffectType.ToString() == "ET_DMPR")
+        switch (FFBPacketHandler.EffectReport.EffectType)
         {
-            FFB.DamperEffect.SetParameters(effectParameters, EffectParameterFlags.TypeSpecificParameters);
-            if (FFB.DamperEffect.Status != EffectStatus.Playing)
-                FFB.DamperEffect.Start();
-        }
-        else if (FFBPacketHandler.EffectReport.EffectType.ToString() == "ET_SPRNG")
-        {
-            FFB.SpringEffect.SetParameters(effectParameters, EffectParameterFlags.TypeSpecificParameters);
-            if (FFB.SpringEffect.Status != EffectStatus.Playing)
-                FFB.SpringEffect.Start();
+            case FFBEType.ET_DMPR:
+                FFB.DamperEffect.SetParameters(effectParameters, EffectParameterFlags.TypeSpecificParameters);
+                if (FFB.DamperEffect.Status != EffectStatus.Playing)
+                    FFB.DamperEffect.Start();
+                break;
+            case FFBEType.ET_SPRNG:
+                FFB.SpringEffect.SetParameters(effectParameters, EffectParameterFlags.TypeSpecificParameters);
+                if (FFB.SpringEffect.Status != EffectStatus.Playing)
+                    FFB.SpringEffect.Start();
+                break;
         }
 
         FFBPacketHandler.Op = new vJoy.FFB_EFF_OP();
@@ -429,7 +431,8 @@ internal class FFB
 
     private static void SendFFBEffectData()
     {
-        Debug.Assert(FFBPacketHandler.PacketType == FFBPType.PT_EFOPREP || FFBPacketHandler.PacketType == FFBPType.PT_EFFREP);
+        Debug.Assert(FFBPacketHandler.PacketType == FFBPType.PT_EFOPREP ||
+                     FFBPacketHandler.PacketType == FFBPType.PT_EFFREP);
 
         if (FFBPacketHandler.EffectReport.EffectType == FFBEType.ET_NONE)
         {
