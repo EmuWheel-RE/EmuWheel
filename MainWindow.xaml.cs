@@ -206,10 +206,5 @@ public partial class MainWindow : Window, IComponentConnector
   {
     CancelToken.tokenSource.Cancel();
     Feeder.RunFeeder = false;
-    VJoyDevice.Joystick.RelinquishVJD(1U);
-    if (InputCollector.GameControllers == null)
-      return;
-    foreach (Device gameController in InputCollector.GameControllers)
-      gameController.Unacquire();
   }
 }

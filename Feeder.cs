@@ -45,9 +45,18 @@ internal class Feeder
     {
         ControllerMapping outputMapping = this.GetOutputMapping();
         this.ResetVJoyState();
-        foreach (Device controller in controllers)
-            controller.Acquire();
-        this.Poll(controllers, outputMapping);
+        try
+        {
+            foreach (var controller in controllers)
+                controller.Acquire();
+            this.Poll(controllers, outputMapping);
+        }
+        finally
+        {
+            VJoyDevice.Joystick.RelinquishVJD(VJoyDevice.ID);
+            foreach (var controller in controllers)
+                controller.Unacquire();
+        }
     }
 
     private void Poll(List<Joystick> controllers, ControllerMapping mapping)
@@ -251,6 +260,10 @@ internal class Feeder
         VJoyDevice.IReport.bHats = uint32_2;
         if (VJoyDevice.Joystick.UpdateVJD(VJoyDevice.ID, ref VJoyDevice.IReport))
             return;
-        VJoyDevice.Joystick.AcquireVJD(VJoyDevice.ID);
+        if (!VJoyDevice.Joystick.AcquireVJD(VJoyDevice.ID))
+        {
+            return;
+        }
+        VJoyDevice.Joystick.UpdateVJD(VJoyDevice.ID, ref VJoyDevice.IReport);
     }
 }
