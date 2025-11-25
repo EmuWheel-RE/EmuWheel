@@ -62,6 +62,7 @@
     <Compile Include="Axis.cs" />
     <Compile Include="Button.cs" />
     <Compile Include="DPad.cs" />
+    <Compile Include="FeederTask.cs" />
     <Compile Include="FFBParams.cs" />
     <Compile Include="Feeder.cs" />
     <Compile Include="InputCollector.cs" />

@@ -6,19 +6,13 @@
 
 using SharpDX.DirectInput;
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Markup;
 
-#nullable disable
 namespace Forza_EmuWheel;
 
 public partial class MainWindow : Window, IComponentConnector
@@ -29,13 +23,7 @@ public partial class MainWindow : Window, IComponentConnector
 
   private IntPtr MainWindowHandle { get; set; }
 
-  private struct FeederTask
-  {
-    public Feeder feeder;
-    public Task task;
-    public CancellationTokenSource cancellationSource;
-  }
-  private FeederTask? feederTask;
+  private FeederTask? FeederTask;
 
   public MainWindow()
   {
@@ -197,16 +185,7 @@ public partial class MainWindow : Window, IComponentConnector
     msg.Message = $"{msg.Message}[INFO] Forza EmuWheel is running...{Environment.NewLine}";
     ConsoleMsg.Msg.StartIsEnabled = false;
     ConsoleMsg.Msg.StopIsEnabled = true;
-    Feeder feeder = new Feeder();
-    var cancellationSource = new CancellationTokenSource();
-    var token = cancellationSource.Token;
-    var task = Task.Factory.StartNew(() => feeder.PollControllers(InputCollector.GameControllers, token), token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-    this.feederTask = new FeederTask()
-    {
-      feeder = feeder,
-      task = task,
-      cancellationSource = cancellationSource
-    };
+    this.FeederTask = new FeederTask();
   }
 
   private void Stop_Click(object sender, RoutedEventArgs e)
@@ -215,14 +194,12 @@ public partial class MainWindow : Window, IComponentConnector
     msg.Message = $"{msg.Message}[INFO] Forza EmuWheel was stopped.{Environment.NewLine}";
     ConsoleMsg.Msg.StartIsEnabled = true;
     ConsoleMsg.Msg.StopIsEnabled = false;
-    this.feederTask?.cancellationSource.Cancel();
-    this.feederTask?.task.Wait();
-    this.feederTask = null;
+    this.FeederTask?.CancelAndWait();
+    this.FeederTask = null;
   }
 
   private void OnApplicationExit(object sender, EventArgs e)
   {
-    this.feederTask?.cancellationSource.Cancel();
-    this.feederTask?.task.Wait();
+    this.FeederTask?.CancelAndWait();
   }
 }
