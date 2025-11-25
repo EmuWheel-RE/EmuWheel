@@ -57,7 +57,7 @@ internal class FFB
     {
         if (FFB.StopFFB)
             return;
-        this.PacketHandler.ProcessFFBPacket(data, userData, new Action<FFBEventArgs>(this.OnFFBDataReceived),
+        this.PacketHandler.ProcessFFBPacket(data, userData, this.OnFFBDataReceived,
             FFB.FFBDevice);
     }
 
@@ -69,7 +69,7 @@ internal class FFB
             return false;
         this.PacketHandler = new FFBPacketHandler(joystick);
         object data = new object();
-        joystick.FfbRegisterGenCB(new vJoy.FfbCbFunc(this.OnVirtualFFBDataReceived), data);
+        joystick.FfbRegisterGenCB(this.OnVirtualFFBDataReceived, data);
         return true;
     }
 
