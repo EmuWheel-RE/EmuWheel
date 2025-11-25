@@ -27,5 +27,7 @@ public class FeederTask : IDisposable
     public void Dispose()
     {
         CancelAndWait();
+        _cancellationSource.Dispose();
+        _task.Dispose();
     }
 }
