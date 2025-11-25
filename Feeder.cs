@@ -116,43 +116,53 @@ internal class Feeder
         }
     }
 
+    private int GetAxisValue(JoystickState state, Axis.AxisEnum axisIndex)
+    {
+        return axisIndex switch
+        {
+            Axis.AxisEnum.X => state.X,
+            Axis.AxisEnum.Y => state.Y,
+            Axis.AxisEnum.Z => state.Z,
+            Axis.AxisEnum.RotationX => state.RotationX,
+            Axis.AxisEnum.RotationY => state.RotationY,
+            Axis.AxisEnum.RotationZ => state.RotationZ,
+            Axis.AxisEnum.Sliders0 => state.Sliders[0],
+            Axis.AxisEnum.Sliders1 => state.Sliders[1],
+            _ => throw new ArgumentOutOfRangeException(nameof(axisIndex), axisIndex, null)
+        };
+    }
+
     private void FeedData(List<JoystickState> data, ControllerMapping mapping)
     {
         if (mapping.Steering != null)
         {
             Axis.AxisEnum axisIndex = (Axis.AxisEnum)mapping.Steering.AxisIndex;
             int controllerIndex = mapping.Steering.ControllerIndex;
-            int sliderValue = this.GetSliderValue(axisIndex, data, controllerIndex);
-            if (sliderValue == -1)
-            {
-                sliderValue = (int)data[mapping.Steering.ControllerIndex].GetType().GetProperty(axisIndex.ToString())
-                    .GetValue((object)data[mapping.Steering.ControllerIndex]);
-                Feeder.SteeringState = sliderValue;
-            }
-
-            int num = Utils.DeadzoneAndInvert(sliderValue, mapping.Steering, true);
-            VJoyDevice.IReport.AxisX = (int)Math.Round((double)num / 2.0, 0);
+            var rawValue = this.GetAxisValue(data[controllerIndex], axisIndex);
+            int value = Utils.DeadzoneAndInvert(rawValue, mapping.Steering, true);
+            VJoyDevice.IReport.AxisX = (int)Math.Round((double)value / 2.0, 0);
+           
+            // For FFB
+            // TODO (https://github.com/EmuWheel-RE/EmuWheel/issues/8): check this is correct
+            SteeringState = rawValue;
         }
 
         if (mapping.Combined != null)
         {
             Axis.AxisEnum axisIndex = (Axis.AxisEnum)mapping.Combined.AxisIndex;
             int controllerIndex = mapping.Combined.ControllerIndex;
-            int sliderValue = this.GetSliderValue(axisIndex, data, controllerIndex);
-            if (sliderValue == -1)
-                sliderValue = (int)data[mapping.Combined.ControllerIndex].GetType().GetProperty(axisIndex.ToString())
-                    .GetValue((object)data[mapping.Combined.ControllerIndex]);
+            int rawValue = this.GetAxisValue(data[controllerIndex], axisIndex);
             int inverted = mapping.Combined.Inverted;
-            if (sliderValue > 32768 /*0x8000*/)
+            if (rawValue > 32768 /*0x8000*/)
             {
-                int num = Utils.CombinedAxisSplit(sliderValue, mapping.Combined, inverted);
+                int num = Utils.CombinedAxisSplit(rawValue, mapping.Combined, inverted);
                 VJoyDevice.IReport.AxisXRot = (int)Math.Round((double)num / 2.0, 0);
                 VJoyDevice.IReport.AxisZ = inverted != 1 ? (int)ushort.MaxValue : 0;
             }
-            else if (sliderValue < 32768 /*0x8000*/)
+            else if (rawValue < 32768 /*0x8000*/)
             {
-                int num = Utils.CombinedAxisSplit(sliderValue, mapping.Combined, inverted);
-                VJoyDevice.IReport.AxisZ = (int)Math.Round((double)num / 2.0, 0);
+                int value = Utils.CombinedAxisSplit(rawValue, mapping.Combined, inverted);
+                VJoyDevice.IReport.AxisZ = (int)Math.Round((double)value / 2.0, 0);
                 VJoyDevice.IReport.AxisXRot = inverted != 1 ? (int)ushort.MaxValue : 0;
             }
         }
@@ -161,48 +171,36 @@ internal class Feeder
         {
             Axis.AxisEnum axisIndex = (Axis.AxisEnum)mapping.Throttle.AxisIndex;
             int controllerIndex = mapping.Throttle.ControllerIndex;
-            int sliderValue = this.GetSliderValue(axisIndex, data, controllerIndex);
-            if (sliderValue == -1)
-                sliderValue = (int)data[mapping.Throttle.ControllerIndex].GetType().GetProperty(axisIndex.ToString())
-                    .GetValue((object)data[mapping.Throttle.ControllerIndex]);
-            int num = Utils.DeadzoneAndInvert(sliderValue, mapping.Throttle, false);
-            VJoyDevice.IReport.AxisZ = (int)Math.Round((double)num / 2.0, 0);
+            int rawValue = this.GetAxisValue(data[controllerIndex], axisIndex);
+            int value = Utils.DeadzoneAndInvert(rawValue, mapping.Throttle, false);
+            VJoyDevice.IReport.AxisZ = (int)Math.Round((double)value / 2.0, 0);
         }
 
         if (mapping.Brake != null)
         {
             Axis.AxisEnum axisIndex = (Axis.AxisEnum)mapping.Brake.AxisIndex;
             int controllerIndex = mapping.Brake.ControllerIndex;
-            int sliderValue = this.GetSliderValue(axisIndex, data, controllerIndex);
-            if (sliderValue == -1)
-                sliderValue = (int)data[mapping.Brake.ControllerIndex].GetType().GetProperty(axisIndex.ToString())
-                    .GetValue((object)data[mapping.Brake.ControllerIndex]);
-            int num = Utils.DeadzoneAndInvert(sliderValue, mapping.Brake, false);
-            VJoyDevice.IReport.AxisXRot = (int)Math.Round((double)num / 2.0, 0);
+            int rawValue = this.GetAxisValue(data[controllerIndex], axisIndex);
+            int value = Utils.DeadzoneAndInvert(rawValue, mapping.Brake, false);
+            VJoyDevice.IReport.AxisXRot = (int)Math.Round((double)value / 2.0, 0);
         }
 
         if (mapping.Clutch != null)
         {
             Axis.AxisEnum axisIndex = (Axis.AxisEnum)mapping.Clutch.AxisIndex;
             int controllerIndex = mapping.Clutch.ControllerIndex;
-            int sliderValue = this.GetSliderValue(axisIndex, data, controllerIndex);
-            if (sliderValue == -1)
-                sliderValue = (int)data[mapping.Clutch.ControllerIndex].GetType().GetProperty(axisIndex.ToString())
-                    .GetValue((object)data[mapping.Clutch.ControllerIndex]);
-            int num = Utils.DeadzoneAndInvert(sliderValue, mapping.Clutch, false);
-            VJoyDevice.IReport.AxisYRot = (int)Math.Round((double)num / 2.0, 0);
+            int rawValue = this.GetAxisValue(data[controllerIndex], axisIndex);
+            int value = Utils.DeadzoneAndInvert(rawValue, mapping.Clutch, false);
+            VJoyDevice.IReport.AxisYRot = (int)Math.Round((double)value / 2.0, 0);
         }
 
         if (mapping.Handbrake != null)
         {
             Axis.AxisEnum axisIndex = (Axis.AxisEnum)mapping.Handbrake.AxisIndex;
             int controllerIndex = mapping.Handbrake.ControllerIndex;
-            int sliderValue = this.GetSliderValue(axisIndex, data, controllerIndex);
-            if (sliderValue == -1)
-                sliderValue = (int)data[mapping.Handbrake.ControllerIndex].GetType().GetProperty(axisIndex.ToString())
-                    .GetValue((object)data[mapping.Handbrake.ControllerIndex]);
-            int num = Utils.DeadzoneAndInvert(sliderValue, mapping.Handbrake, false);
-            VJoyDevice.IReport.AxisZRot = (int)Math.Round((double)num / 2.0, 0);
+            int rawValue = this.GetAxisValue(data[controllerIndex], axisIndex);
+            int value = Utils.DeadzoneAndInvert(rawValue, mapping.Handbrake, false);
+            VJoyDevice.IReport.AxisZRot = (int)Math.Round((double)value / 2.0, 0);
         }
 
         if (mapping.Buttons != null)
@@ -220,20 +218,6 @@ internal class Feeder
         if (VJoyDevice.Joystick.UpdateVJD(VJoyDevice.ID, ref VJoyDevice.IReport))
             return;
         VJoyDevice.Joystick.AcquireVJD(VJoyDevice.ID);
-    }
-
-    private int GetSliderValue(Axis.AxisEnum axis, List<JoystickState> data, int index)
-    {
-        int sliderValue = -1;
-        if (axis.ToString().IndexOf("Sliders") == -1)
-            return sliderValue;
-        int[] numArray = (int[])data[index].GetType().GetProperty(axis.ToString().Remove(7))
-            .GetValue((object)data[index]);
-        if (axis.ToString().IndexOf("0") != -1)
-            sliderValue = numArray[0];
-        else if (axis.ToString().IndexOf("1") != -1)
-            sliderValue = numArray[1];
-        return sliderValue;
     }
 
     private bool[] GetPOVArray(List<JoystickState> data, ControllerMapping mapping)
