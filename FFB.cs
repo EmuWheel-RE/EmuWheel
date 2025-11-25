@@ -19,26 +19,6 @@ internal class FFB
     public static bool StopFFB = false;
     private FFBPacketHandler PacketHandler;
 
-    private static Dictionary<string, Guid> EffectDictionary = new Dictionary<string, Guid>()
-    {
-        {
-            "ET_CONST",
-            EffectGuid.ConstantForce
-        },
-        {
-            "ET_SINE",
-            EffectGuid.Sine
-        },
-        {
-            "ET_SPRNG",
-            EffectGuid.Spring
-        },
-        {
-            "ET_DMPR",
-            EffectGuid.Damper
-        }
-    };
-
     public static Joystick FFBDevice { get; set; }
 
     public FFB(Joystick device) => FFB.FFBDevice = device;
@@ -260,10 +240,6 @@ internal class FFB
         FFBPacketHandler.Op = new vJoy.FFB_EFF_OP();
     }
 
-    private static bool SineBug { get; set; }
-
-    private static byte SineGainValue { get; set; }
-
     private static bool SineEngineBug { get; set; }
 
     private static bool SineGearShiftBug { get; set; }
@@ -281,11 +257,6 @@ internal class FFB
         {
             Parameters = specificParameters
         };
-        FFB.EffectDictionary
-            .Where(x =>
-                x.Key == FFBPacketHandler.EffectReport.EffectType.ToString())
-            .Select(x => x.Value)
-            .First();
         int[] axes = new int[1] { FFB.ActuatorsObjectTypes[0] };
         int[] directions = new int[1]
         {
@@ -353,7 +324,6 @@ internal class FFB
 
     private static void SendCondition(Joystick FFBDevice)
     {
-        Guid effectGuid = new Guid();
         TypeSpecificParameters specificParameters = new ConditionSet();
         specificParameters.As<ConditionSet>().Conditions = new SharpDX.DirectInput.Condition[1];
         specificParameters.As<ConditionSet>().Conditions[0].DeadBand = FFBPacketHandler.ConditionalReport.DeadBand;
@@ -388,14 +358,6 @@ internal class FFB
         {
             Parameters = specificParameters
         };
-        effectGuid = FFB.EffectDictionary
-            .Where(x =>
-                x.Key == FFBPacketHandler.EffectReport.EffectType.ToString())
-            .Select(x => x.Value)
-            .First();
-        Effect effect = new Effect(FFBDevice.CreatedEffects
-            .Where(x => x.Guid == effectGuid)
-            .Select(x => x.NativePointer).First());
         int[] axes = new int[1] { FFB.ActuatorsObjectTypes[0] };
         int[] directions = new int[1]
         {
