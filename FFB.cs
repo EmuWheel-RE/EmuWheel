@@ -114,9 +114,9 @@ internal class FFB
         try
         {
             Controller controller = InputCollector.Controllers
-                .Where<Controller>(x =>
+                .Where(x =>
                     x.InstanceGuid == FFB.FFBDevice.Information.InstanceGuid)
-                .Select<Controller, Controller>(x => x).First<Controller>();
+                .Select(x => x).First();
             FFB.ConstantMagnitudeMulti = controller.FFBParameters.Const.Magnitude;
             FFB.ConstantGainMulti = controller.FFBParameters.Const.MaximumForce;
             FFB.SineFrequencyMulti = controller.FFBParameters.Sine.Frequency;
@@ -282,10 +282,10 @@ internal class FFB
             Parameters = specificParameters
         };
         FFB.EffectDictionary
-            .Where<KeyValuePair<string, Guid>>(x =>
+            .Where(x =>
                 x.Key == FFBPacketHandler.EffectReport.EffectType.ToString())
-            .Select<KeyValuePair<string, Guid>, Guid>(x => x.Value)
-            .First<Guid>();
+            .Select(x => x.Value)
+            .First();
         int[] axes = new int[1] { FFB.ActuatorsObjectTypes[0] };
         int[] directions = new int[1]
         {
@@ -389,13 +389,13 @@ internal class FFB
             Parameters = specificParameters
         };
         effectGuid = FFB.EffectDictionary
-            .Where<KeyValuePair<string, Guid>>(x =>
+            .Where(x =>
                 x.Key == FFBPacketHandler.EffectReport.EffectType.ToString())
-            .Select<KeyValuePair<string, Guid>, Guid>(x => x.Value)
-            .First<Guid>();
+            .Select(x => x.Value)
+            .First();
         Effect effect = new Effect(FFBDevice.CreatedEffects
-            .Where<Effect>(x => x.Guid == effectGuid)
-            .Select<Effect, IntPtr>(x => x.NativePointer).First<IntPtr>());
+            .Where(x => x.Guid == effectGuid)
+            .Select(x => x.NativePointer).First());
         int[] axes = new int[1] { FFB.ActuatorsObjectTypes[0] };
         int[] directions = new int[1]
         {
