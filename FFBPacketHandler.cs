@@ -46,113 +46,104 @@ internal class FFBPacketHandler
         SharpDX.DirectInput.Joystick FFBDevice)
     {
         FFBEventArgs ffbEventArgs = new FFBEventArgs();
-        int num = (int)this.Joystick.Ffb_h_Type(data, ref FFBPacketHandler.PacketType);
-        switch (FFBPacketHandler.PacketType.ToString())
+        Joystick.Ffb_h_Type(data, ref PacketType);
+        switch (PacketType.ToString())
         {
             case "PT_CONDREP":
-                if (this.Joystick.Ffb_h_Eff_Cond(data, ref FFBPacketHandler.ConditionalReport) == 0U)
+                if (Joystick.Ffb_h_Eff_Cond(data, ref ConditionalReport) == 0U)
                 {
-                    FFBPacketHandler.FFBDataUnit.ConditionalReport = FFBPacketHandler.ConditionalReport;
-                    if (Utils.CompareObjects((object)FFBPacketHandler.OldConditionalReport,
-                            (object)FFBPacketHandler.ConditionalReport))
+                    FFBDataUnit.ConditionalReport = ConditionalReport;
+                    if (Utils.CompareObjects((object)OldConditionalReport,
+                            (object)ConditionalReport))
                         return;
-                    FFBPacketHandler.OldConditionalReport = FFBPacketHandler.ConditionalReport;
-                    break;
+                    OldConditionalReport = ConditionalReport;
                 }
 
                 break;
             case "PT_CONSTREP":
-                if (this.Joystick.Ffb_h_Eff_Constant(data, ref FFBPacketHandler.ConstantForceReport) == 0U)
+                if (Joystick.Ffb_h_Eff_Constant(data, ref ConstantForceReport) == 0U)
                 {
-                    FFBPacketHandler.FFBDataUnit.ConstantForceReport = FFBPacketHandler.ConstantForceReport;
-                    if (Utils.CompareObjects((object)FFBPacketHandler.OldConstantForceReport,
-                            (object)FFBPacketHandler.ConstantForceReport))
+                    FFBDataUnit.ConstantForceReport = ConstantForceReport;
+                    if (Utils.CompareObjects((object)OldConstantForceReport,
+                            (object)ConstantForceReport))
                         return;
-                    FFBPacketHandler.OldConstantForceReport = FFBPacketHandler.ConstantForceReport;
-                    break;
+                    OldConstantForceReport = ConstantForceReport;
                 }
 
                 break;
             case "PT_CTRLREP":
-                if (this.Joystick.Ffb_h_DevCtrl(data, ref FFBPacketHandler.Control) == 0U)
+                if (Joystick.Ffb_h_DevCtrl(data, ref Control) == 0U)
                 {
-                    FFBPacketHandler.FFBDataUnit.Control = FFBPacketHandler.Control;
-                    break;
+                    FFBDataUnit.Control = Control;
                 }
 
                 break;
             case "PT_EFFREP":
-                if (this.Joystick.Ffb_h_Eff_Report(data, ref FFBPacketHandler.EffectReport) == 0U)
+                if (Joystick.Ffb_h_Eff_Report(data, ref EffectReport) == 0U)
                 {
-                    FFBPacketHandler.FFBDataUnit.EffectReport = FFBPacketHandler.EffectReport;
-                    if (Utils.CompareObjects((object)FFBPacketHandler.OldEffectReport,
-                            (object)FFBPacketHandler.EffectReport))
+                    FFBDataUnit.EffectReport = EffectReport;
+                    if (Utils.CompareObjects((object)OldEffectReport,
+                            (object)EffectReport))
                         return;
-                    FFBPacketHandler.OldEffectReport = FFBPacketHandler.EffectReport;
-                    break;
+                    OldEffectReport = EffectReport;
                 }
 
                 break;
             case "PT_EFOPREP":
-                if (this.Joystick.Ffb_h_EffOp(data, ref FFBPacketHandler.Op) == 0U)
+                if (Joystick.Ffb_h_EffOp(data, ref Op) == 0U)
                 {
-                    FFBPacketHandler.OldOp = FFBPacketHandler.Op;
-                    FFBPacketHandler.FFBDataUnit.Op = FFBPacketHandler.Op;
-                    break;
+                    OldOp = Op;
+                    FFBDataUnit.Op = Op;
                 }
 
                 break;
             case "PT_ENVREP":
-                if (this.Joystick.Ffb_h_Eff_Envlp(data, ref FFBPacketHandler.EnvelopeReport) == 0U)
+                if (Joystick.Ffb_h_Eff_Envlp(data, ref EnvelopeReport) == 0U)
                 {
-                    FFBPacketHandler.FFBDataUnit.EnvelopeReport = FFBPacketHandler.EnvelopeReport;
-                    if (Utils.CompareObjects((object)FFBPacketHandler.OldEnvelopeReport,
-                            (object)FFBPacketHandler.EnvelopeReport))
+                    FFBDataUnit.EnvelopeReport = EnvelopeReport;
+                    if (Utils.CompareObjects((object)OldEnvelopeReport,
+                            (object)EnvelopeReport))
                         return;
-                    FFBPacketHandler.OldEnvelopeReport = FFBPacketHandler.EnvelopeReport;
-                    break;
+                    OldEnvelopeReport = EnvelopeReport;
                 }
 
                 break;
             case "PT_GAINREP":
-                if (this.Joystick.Ffb_h_DevGain(data, ref FFBPacketHandler.Gain) == 0U)
+                if (Joystick.Ffb_h_DevGain(data, ref Gain) == 0U)
                 {
-                    FFBPacketHandler.FFBDataUnit.Gain = FFBPacketHandler.Gain;
-                    if ((int)FFBPacketHandler.OldGain == (int)FFBPacketHandler.Gain)
+                    FFBDataUnit.Gain = Gain;
+                    if ((int)OldGain == (int)Gain)
                         return;
-                    FFBPacketHandler.OldGain = FFBPacketHandler.Gain;
-                    break;
+                    OldGain = Gain;
                 }
 
                 break;
             case "PT_PRIDREP":
-                if (this.Joystick.Ffb_h_Eff_Period(data, ref FFBPacketHandler.PeriodicReport) == 0U)
+                if (Joystick.Ffb_h_Eff_Period(data, ref PeriodicReport) == 0U)
                 {
-                    FFBPacketHandler.FFBDataUnit.PeriodicReport = FFBPacketHandler.PeriodicReport;
-                    if (Utils.CompareObjects((object)FFBPacketHandler.OldPeriodicReport,
-                            (object)FFBPacketHandler.PeriodicReport))
+                    FFBDataUnit.PeriodicReport = PeriodicReport;
+                    if (Utils.CompareObjects((object)OldPeriodicReport,
+                            (object)PeriodicReport))
                         return;
-                    FFBPacketHandler.OldPeriodicReport = FFBPacketHandler.PeriodicReport;
-                    break;
+                    OldPeriodicReport = PeriodicReport;
                 }
 
                 break;
             case "PT_RAMPREP":
-                if (this.Joystick.Ffb_h_Eff_Ramp(data, ref FFBPacketHandler.RampForceReport) == 0U)
+                if (Joystick.Ffb_h_Eff_Ramp(data, ref RampForceReport) == 0U)
                 {
-                    FFBPacketHandler.FFBDataUnit.RampForceReport = FFBPacketHandler.RampForceReport;
-                    if (Utils.CompareObjects((object)FFBPacketHandler.OldRampForceReport,
-                            (object)FFBPacketHandler.RampForceReport))
+                    FFBDataUnit.RampForceReport = RampForceReport;
+                    if (Utils.CompareObjects((object)OldRampForceReport,
+                            (object)RampForceReport))
                         return;
-                    FFBPacketHandler.OldRampForceReport = FFBPacketHandler.RampForceReport;
-                    break;
+                    OldRampForceReport = RampForceReport;
                 }
 
                 break;
         }
 
-        FFBPacketHandler.FFBDataUnit.PacketType = FFBPacketHandler.PacketType.ToString();
-        ffbEventArgs.Data = FFBPacketHandler.FFBDataUnit;
+        FFBDataUnit.PacketType = PacketType.ToString();
+        ffbEventArgs.Data = FFBDataUnit;
         FFB.SendFFBData();
         callback(ffbEventArgs);
     }
