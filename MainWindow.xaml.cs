@@ -189,6 +189,7 @@ public partial class MainWindow : Window, IComponentConnector
     ConsoleMsg.Msg.StartIsEnabled = false;
     ConsoleMsg.Msg.StopIsEnabled = true;
     Feeder feeder = new Feeder();
+    Feeder.RunFeeder = true;
     Task.Factory.StartNew((System.Action) (() => feeder.PollControllers(InputCollector.GameControllers)), CancelToken.tokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
   }
 
