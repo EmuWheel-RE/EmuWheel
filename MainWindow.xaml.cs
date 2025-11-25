@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,6 +28,14 @@ public partial class MainWindow : Window, IComponentConnector
   private static SharpDX.DirectInput.DirectInput DI { get; set; }
 
   private IntPtr MainWindowHandle { get; set; }
+
+  private struct FeederTask
+  {
+    public Feeder feeder;
+    public Task task;
+    public CancellationTokenSource cancellationSource;
+  }
+  private FeederTask? feederTask;
 
   public MainWindow()
   {
@@ -189,8 +198,15 @@ public partial class MainWindow : Window, IComponentConnector
     ConsoleMsg.Msg.StartIsEnabled = false;
     ConsoleMsg.Msg.StopIsEnabled = true;
     Feeder feeder = new Feeder();
-    Feeder.RunFeeder = true;
-    Task.Factory.StartNew((System.Action) (() => feeder.PollControllers(InputCollector.GameControllers)), CancelToken.tokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+    var cancellationSource = new CancellationTokenSource();
+    var token = cancellationSource.Token;
+    var task = Task.Factory.StartNew(() => feeder.PollControllers(InputCollector.GameControllers, token), token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+    this.feederTask = new FeederTask()
+    {
+      feeder = feeder,
+      task = task,
+      cancellationSource = cancellationSource
+    };
   }
 
   private void Stop_Click(object sender, RoutedEventArgs e)
@@ -199,12 +215,14 @@ public partial class MainWindow : Window, IComponentConnector
     msg.Message = $"{msg.Message}[INFO] Forza EmuWheel was stopped.{Environment.NewLine}";
     ConsoleMsg.Msg.StartIsEnabled = true;
     ConsoleMsg.Msg.StopIsEnabled = false;
-    Feeder.RunFeeder = false;
+    this.feederTask?.cancellationSource.Cancel();
+    this.feederTask?.task.Wait();
+    this.feederTask = null;
   }
 
   private void OnApplicationExit(object sender, EventArgs e)
   {
-    CancelToken.tokenSource.Cancel();
-    Feeder.RunFeeder = false;
+    this.feederTask?.cancellationSource.Cancel();
+    this.feederTask?.task.Wait();
   }
 }

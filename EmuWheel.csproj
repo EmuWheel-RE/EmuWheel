@@ -57,7 +57,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CancelToken.cs" />
     <Compile Include="ConsoleMsg.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="Axis.cs" />

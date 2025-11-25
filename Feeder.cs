@@ -15,8 +15,6 @@ namespace Forza_EmuWheel;
 
 internal class Feeder
 {
-    public static bool RunFeeder = true;
-
     public static List<JoystickState> ControllerState { get; set; }
 
     public static int SteeringState { get; set; }
@@ -41,7 +39,7 @@ internal class Feeder
         return outputMapping;
     }
 
-    public void PollControllers(List<Joystick> controllers)
+    public void PollControllers(List<Joystick> controllers, CancellationToken token)
     {
         ControllerMapping outputMapping = this.GetOutputMapping();
         this.ResetVJoyState();
@@ -49,7 +47,7 @@ internal class Feeder
         {
             foreach (var controller in controllers)
                 controller.Acquire();
-            this.Poll(controllers, outputMapping);
+            this.Poll(controllers, outputMapping, token);
         }
         finally
         {
@@ -59,10 +57,10 @@ internal class Feeder
         }
     }
 
-    private void Poll(List<Joystick> controllers, ControllerMapping mapping)
+    private void Poll(List<Joystick> controllers, ControllerMapping mapping, CancellationToken token)
     {
         Feeder.SteeringState = -1;
-        while (Feeder.RunFeeder)
+        while (!token.IsCancellationRequested)
         {
             Feeder.ControllerState = new List<JoystickState>();
             foreach (Joystick controller in controllers)
