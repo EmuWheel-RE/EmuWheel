@@ -47,9 +47,9 @@ internal class FFBPacketHandler
     {
         FFBEventArgs ffbEventArgs = new FFBEventArgs();
         Joystick.Ffb_h_Type(data, ref PacketType);
-        switch (PacketType.ToString())
+        switch (PacketType)
         {
-            case "PT_CONDREP":
+            case FFBPType.PT_CONDREP:
                 if (Joystick.Ffb_h_Eff_Cond(data, ref ConditionalReport) == 0U)
                 {
                     FFBDataUnit.ConditionalReport = ConditionalReport;
@@ -60,7 +60,7 @@ internal class FFBPacketHandler
                 }
 
                 break;
-            case "PT_CONSTREP":
+            case FFBPType.PT_CONSTREP:
                 if (Joystick.Ffb_h_Eff_Constant(data, ref ConstantForceReport) == 0U)
                 {
                     FFBDataUnit.ConstantForceReport = ConstantForceReport;
@@ -71,14 +71,14 @@ internal class FFBPacketHandler
                 }
 
                 break;
-            case "PT_CTRLREP":
+            case FFBPType.PT_CTRLREP:
                 if (Joystick.Ffb_h_DevCtrl(data, ref Control) == 0U)
                 {
                     FFBDataUnit.Control = Control;
                 }
 
                 break;
-            case "PT_EFFREP":
+            case FFBPType.PT_EFFREP:
                 if (Joystick.Ffb_h_Eff_Report(data, ref EffectReport) == 0U)
                 {
                     FFBDataUnit.EffectReport = EffectReport;
@@ -89,7 +89,7 @@ internal class FFBPacketHandler
                 }
 
                 break;
-            case "PT_EFOPREP":
+            case FFBPType.PT_EFOPREP:
                 if (Joystick.Ffb_h_EffOp(data, ref Op) == 0U)
                 {
                     OldOp = Op;
@@ -97,7 +97,7 @@ internal class FFBPacketHandler
                 }
 
                 break;
-            case "PT_ENVREP":
+            case FFBPType.PT_ENVREP:
                 if (Joystick.Ffb_h_Eff_Envlp(data, ref EnvelopeReport) == 0U)
                 {
                     FFBDataUnit.EnvelopeReport = EnvelopeReport;
@@ -108,7 +108,7 @@ internal class FFBPacketHandler
                 }
 
                 break;
-            case "PT_GAINREP":
+            case FFBPType.PT_GAINREP:
                 if (Joystick.Ffb_h_DevGain(data, ref Gain) == 0U)
                 {
                     FFBDataUnit.Gain = Gain;
@@ -118,7 +118,7 @@ internal class FFBPacketHandler
                 }
 
                 break;
-            case "PT_PRIDREP":
+            case FFBPType.PT_PRIDREP:
                 if (Joystick.Ffb_h_Eff_Period(data, ref PeriodicReport) == 0U)
                 {
                     FFBDataUnit.PeriodicReport = PeriodicReport;
@@ -129,7 +129,7 @@ internal class FFBPacketHandler
                 }
 
                 break;
-            case "PT_RAMPREP":
+            case FFBPType.PT_RAMPREP:
                 if (Joystick.Ffb_h_Eff_Ramp(data, ref RampForceReport) == 0U)
                 {
                     FFBDataUnit.RampForceReport = RampForceReport;
