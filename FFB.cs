@@ -50,7 +50,7 @@ internal class FFB
         FFB.FFBDataReceiveEventHandler ffbDataReceived = this.FFBDataReceived;
         if (ffbDataReceived == null)
             return;
-        ffbDataReceived((object)this, (EventArgs)e);
+        ffbDataReceived(this, e);
     }
 
     public void OnVirtualFFBDataReceived(IntPtr data, object userData)
@@ -114,9 +114,9 @@ internal class FFB
         try
         {
             Controller controller = InputCollector.Controllers
-                .Where<Controller>((Func<Controller, bool>)(x =>
-                    x.InstanceGuid == FFB.FFBDevice.Information.InstanceGuid))
-                .Select<Controller, Controller>((Func<Controller, Controller>)(x => x)).First<Controller>();
+                .Where<Controller>(x =>
+                    x.InstanceGuid == FFB.FFBDevice.Information.InstanceGuid)
+                .Select<Controller, Controller>(x => x).First<Controller>();
             FFB.ConstantMagnitudeMulti = controller.FFBParameters.Const.Magnitude;
             FFB.ConstantGainMulti = controller.FFBParameters.Const.MaximumForce;
             FFB.SineFrequencyMulti = controller.FFBParameters.Sine.Frequency;
@@ -165,7 +165,7 @@ internal class FFB
             int[] axes = new int[1] { FFB.ActuatorsObjectTypes[0] };
             int[] directions = new int[1]
             {
-                (int)FFBPacketHandler.EffectReport.Direction
+                FFBPacketHandler.EffectReport.Direction
             };
             parameters.Duration = -1;
             parameters.Flags = EffectFlags.ObjectIds | EffectFlags.Cartesian;
@@ -175,9 +175,9 @@ internal class FFB
             parameters.SamplePeriod = 0;
             parameters.TriggerButton = -1;
             parameters.TriggerRepeatInterval = 0;
-            TypeSpecificParameters specificParameters1 = (TypeSpecificParameters)new ConstantForce();
-            TypeSpecificParameters specificParameters2 = (TypeSpecificParameters)new PeriodicForce();
-            TypeSpecificParameters specificParameters3 = (TypeSpecificParameters)new ConditionSet();
+            TypeSpecificParameters specificParameters1 = new ConstantForce();
+            TypeSpecificParameters specificParameters2 = new PeriodicForce();
+            TypeSpecificParameters specificParameters3 = new ConditionSet();
             specificParameters3.As<ConditionSet>().Conditions = new SharpDX.DirectInput.Condition[1];
             parameters.Parameters = specificParameters1;
             FFB.ConstantEffect = new Effect(FFB.FFBDev, EffectGuid.ConstantForce, parameters);
@@ -199,35 +199,35 @@ internal class FFB
 
     private static void SendConstant(Joystick FFBDevice)
     {
-        TypeSpecificParameters specificParameters = (TypeSpecificParameters)new ConstantForce();
+        TypeSpecificParameters specificParameters = new ConstantForce();
         int num1 = (int)Math.Round(
-            (double)FFBPacketHandler.ConstantForceReport.Magnitude * (double)FFB.ConstantMagnitudeMulti, 0);
-        int num2 = (int)Math.Round((double)FFB.ConstantGainMulti * 10000.0, 0);
+            FFBPacketHandler.ConstantForceReport.Magnitude * (double)FFB.ConstantMagnitudeMulti, 0);
+        int num2 = (int)Math.Round(FFB.ConstantGainMulti * 10000.0, 0);
         if (Math.Abs(num1) > num2)
             num1 = num2 * Math.Sign(num1);
-        if (Math.Abs(num1) < (int)((double)FFB.ConstMinimumForce * 10000.0))
-            num1 = (int)((double)FFB.ConstMinimumForce * 10000.0) * Math.Sign(num1);
+        if (Math.Abs(num1) < (int)(FFB.ConstMinimumForce * 10000.0))
+            num1 = (int)(FFB.ConstMinimumForce * 10000.0) * Math.Sign(num1);
         if (Math.Abs(num1) > 10000)
             num1 = 10000 * Math.Sign(num1);
-        if ((double)Math.Abs(num1) > (double)FFB.FilterThreshold * 10000.0 && Feeder.SteeringState != -1)
+        if (Math.Abs(num1) > FFB.FilterThreshold * 10000.0 && Feeder.SteeringState != -1)
         {
             int steeringState = Feeder.SteeringState;
-            if (steeringState < (int)short.MaxValue)
+            if (steeringState < short.MaxValue)
             {
-                float num3 = 1f - (float)steeringState / (float)short.MaxValue;
-                if ((double)num3 < (double)FFB.MinimumCoefficient)
+                float num3 = 1f - steeringState / (float)short.MaxValue;
+                if (num3 < (double)FFB.MinimumCoefficient)
                     num3 = FFB.MinimumCoefficient;
-                num1 = (int)((double)num1 * (double)num3);
+                num1 = (int)(num1 * (double)num3);
             }
-            else if (steeringState > (int)short.MaxValue)
+            else if (steeringState > short.MaxValue)
             {
-                float num4 = (float)(steeringState - (int)short.MaxValue) / (float)short.MaxValue;
-                if ((double)num4 < (double)FFB.MinimumCoefficient)
+                float num4 = (steeringState - short.MaxValue) / (float)short.MaxValue;
+                if (num4 < (double)FFB.MinimumCoefficient)
                     num4 = FFB.MinimumCoefficient;
-                num1 = (int)((double)num1 * (double)num4);
+                num1 = (int)(num1 * (double)num4);
             }
             else
-                num1 = (int)((double)num1 * (double)FFB.MinimumCoefficient);
+                num1 = (int)(num1 * (double)FFB.MinimumCoefficient);
         }
 
         specificParameters.As<ConstantForce>().Magnitude = -num1;
@@ -238,22 +238,22 @@ internal class FFB
         int[] axes = new int[1] { FFB.ActuatorsObjectTypes[0] };
         int[] directions = new int[1]
         {
-            (int)FFBPacketHandler.EffectReport.Direction
+            FFBPacketHandler.EffectReport.Direction
         };
-        effectParameters.Duration = (int)FFBPacketHandler.EffectReport.Duration * 1000;
+        effectParameters.Duration = FFBPacketHandler.EffectReport.Duration * 1000;
         if (FFBPacketHandler.EffectReport.Duration == ushort.MaxValue ||
-            FFBPacketHandler.EffectReport.Duration == (ushort)0)
+            FFBPacketHandler.EffectReport.Duration == 0)
             effectParameters.Duration = -1;
         effectParameters.Flags = EffectFlags.ObjectIds | EffectFlags.Cartesian;
         effectParameters.Gain =
-            (int)Math.Round((double)FFBPacketHandler.EffectReport.Gain / (double)byte.MaxValue * 10000.0, 0);
+            (int)Math.Round(FFBPacketHandler.EffectReport.Gain / (double)byte.MaxValue * 10000.0, 0);
         effectParameters.SetAxes(axes, directions);
         effectParameters.StartDelay = 0;
-        effectParameters.SamplePeriod = (int)FFBPacketHandler.EffectReport.SamplePrd;
-        effectParameters.TriggerButton = (int)FFBPacketHandler.EffectReport.TrigerBtn;
+        effectParameters.SamplePeriod = FFBPacketHandler.EffectReport.SamplePrd;
+        effectParameters.TriggerButton = FFBPacketHandler.EffectReport.TrigerBtn;
         if (FFBPacketHandler.EffectReport.TrigerBtn == byte.MaxValue)
             effectParameters.TriggerButton = -1;
-        effectParameters.TriggerRepeatInterval = (int)FFBPacketHandler.EffectReport.TrigerRpt;
+        effectParameters.TriggerRepeatInterval = FFBPacketHandler.EffectReport.TrigerRpt;
         FFB.ConstantEffect.SetParameters(effectParameters, EffectParameterFlags.TypeSpecificParameters);
         if (FFB.ConstantEffect.Status != EffectStatus.Playing)
             FFB.ConstantEffect.Start(1, EffectPlayFlags.NoDownload);
@@ -270,67 +270,67 @@ internal class FFB
 
     private static void SendPeriodic(Joystick FFBDevice)
     {
-        TypeSpecificParameters specificParameters = (TypeSpecificParameters)new PeriodicForce();
+        TypeSpecificParameters specificParameters = new PeriodicForce();
         specificParameters.As<PeriodicForce>().Magnitude = (int)FFBPacketHandler.PeriodicReport.Magnitude;
-        specificParameters.As<PeriodicForce>().Offset = (int)FFBPacketHandler.PeriodicReport.Offset;
+        specificParameters.As<PeriodicForce>().Offset = FFBPacketHandler.PeriodicReport.Offset;
         specificParameters.As<PeriodicForce>().Period =
-            (int)Math.Round((double)(FFBPacketHandler.PeriodicReport.Period * 1000U) / (double)FFB.SineFrequencyMulti,
+            (int)Math.Round(FFBPacketHandler.PeriodicReport.Period * 1000U / (double)FFB.SineFrequencyMulti,
                 0);
-        specificParameters.As<PeriodicForce>().Phase = (int)((double)FFB.SineWavePhase * 35999.0);
+        specificParameters.As<PeriodicForce>().Phase = (int)(FFB.SineWavePhase * 35999.0);
         EffectParameters effectParameters = new EffectParameters()
         {
             Parameters = specificParameters
         };
         FFB.EffectDictionary
-            .Where<KeyValuePair<string, Guid>>((Func<KeyValuePair<string, Guid>, bool>)(x =>
-                x.Key == FFBPacketHandler.EffectReport.EffectType.ToString()))
-            .Select<KeyValuePair<string, Guid>, Guid>((Func<KeyValuePair<string, Guid>, Guid>)(x => x.Value))
+            .Where<KeyValuePair<string, Guid>>(x =>
+                x.Key == FFBPacketHandler.EffectReport.EffectType.ToString())
+            .Select<KeyValuePair<string, Guid>, Guid>(x => x.Value)
             .First<Guid>();
         int[] axes = new int[1] { FFB.ActuatorsObjectTypes[0] };
         int[] directions = new int[1]
         {
-            (int)FFBPacketHandler.EffectReport.Direction
+            FFBPacketHandler.EffectReport.Direction
         };
-        effectParameters.Duration = (int)FFBPacketHandler.EffectReport.Duration * 1000;
+        effectParameters.Duration = FFBPacketHandler.EffectReport.Duration * 1000;
         if (FFBPacketHandler.EffectReport.Duration == ushort.MaxValue ||
-            FFBPacketHandler.EffectReport.Duration == (ushort)0)
+            FFBPacketHandler.EffectReport.Duration == 0)
             effectParameters.Duration = -1;
         effectParameters.Flags = EffectFlags.ObjectIds | EffectFlags.Cartesian;
         int num1 = (int)Math.Round(
-            (double)FFBPacketHandler.EffectReport.Gain / (double)byte.MaxValue * 10000.0 *
-            (double)FFB.SineWaveMagnitude, 0);
-        int num2 = (int)Math.Round((double)FFB.SineGainMulti * 10000.0, 0);
+            FFBPacketHandler.EffectReport.Gain / (double)byte.MaxValue * 10000.0 *
+            FFB.SineWaveMagnitude, 0);
+        int num2 = (int)Math.Round(FFB.SineGainMulti * 10000.0, 0);
         if (num1 > num2)
             num1 = num2;
-        if (num1 < (int)Math.Round((double)FFB.SineMinimumForce * 10000.0, 0) && num1 > 0)
-            num1 = (int)Math.Round((double)FFB.SineMinimumForce * 10000.0, 0);
-        if (FFBPacketHandler.EffectReport.Gain == (byte)32 /*0x20*/)
+        if (num1 < (int)Math.Round(FFB.SineMinimumForce * 10000.0, 0) && num1 > 0)
+            num1 = (int)Math.Round(FFB.SineMinimumForce * 10000.0, 0);
+        if (FFBPacketHandler.EffectReport.Gain == 32 /*0x20*/)
         {
             FFB.SineGearShiftBug = true;
-            num1 = (int)Math.Round((double)FFB.GearShiftVibrationStrength * 10000.0, 0);
+            num1 = (int)Math.Round(FFB.GearShiftVibrationStrength * 10000.0, 0);
             specificParameters.As<PeriodicForce>().Period = (int)Math.Round(
-                (double)(FFBPacketHandler.PeriodicReport.Period * 1000U) / (double)FFB.GearShiftVibrationFrequency, 0);
+                FFBPacketHandler.PeriodicReport.Period * 1000U / (double)FFB.GearShiftVibrationFrequency, 0);
         }
-        else if (FFB.SineGearShiftBug && FFBPacketHandler.EffectReport.Gain == (byte)0)
+        else if (FFB.SineGearShiftBug && FFBPacketHandler.EffectReport.Gain == 0)
         {
-            num1 = (int)Math.Round((double)FFB.GearShiftVibrationStrength * 10000.0, 0);
+            num1 = (int)Math.Round(FFB.GearShiftVibrationStrength * 10000.0, 0);
             specificParameters.As<PeriodicForce>().Period = (int)Math.Round(
-                (double)(FFBPacketHandler.PeriodicReport.Period * 1000U) / (double)FFB.GearShiftVibrationFrequency, 0);
+                FFBPacketHandler.PeriodicReport.Period * 1000U / (double)FFB.GearShiftVibrationFrequency, 0);
             FFB.SineGearShiftBug = false;
         }
 
-        if (FFBPacketHandler.EffectReport.Gain == (byte)1)
+        if (FFBPacketHandler.EffectReport.Gain == 1)
         {
             FFB.SineEngineBug = true;
-            num1 = (int)Math.Round((double)FFB.EngineVibrationStrength * 10000.0, 0);
+            num1 = (int)Math.Round(FFB.EngineVibrationStrength * 10000.0, 0);
             specificParameters.As<PeriodicForce>().Period = (int)Math.Round(
-                (double)(FFBPacketHandler.PeriodicReport.Period * 1000U) / (double)FFB.EngineVibrationFrequency, 0);
+                FFBPacketHandler.PeriodicReport.Period * 1000U / (double)FFB.EngineVibrationFrequency, 0);
         }
-        else if (FFB.SineEngineBug && FFBPacketHandler.EffectReport.Gain == (byte)0)
+        else if (FFB.SineEngineBug && FFBPacketHandler.EffectReport.Gain == 0)
         {
-            num1 = (int)Math.Round((double)FFB.EngineVibrationStrength * 10000.0, 0);
+            num1 = (int)Math.Round(FFB.EngineVibrationStrength * 10000.0, 0);
             specificParameters.As<PeriodicForce>().Period = (int)Math.Round(
-                (double)(FFBPacketHandler.PeriodicReport.Period * 1000U) / (double)FFB.EngineVibrationFrequency, 0);
+                FFBPacketHandler.PeriodicReport.Period * 1000U / (double)FFB.EngineVibrationFrequency, 0);
             FFB.SineEngineBug = false;
         }
 
@@ -340,11 +340,11 @@ internal class FFB
         effectParameters.Parameters = specificParameters;
         effectParameters.SetAxes(axes, directions);
         effectParameters.StartDelay = 0;
-        effectParameters.SamplePeriod = (int)FFBPacketHandler.EffectReport.SamplePrd;
-        effectParameters.TriggerButton = (int)FFBPacketHandler.EffectReport.TrigerBtn;
+        effectParameters.SamplePeriod = FFBPacketHandler.EffectReport.SamplePrd;
+        effectParameters.TriggerButton = FFBPacketHandler.EffectReport.TrigerBtn;
         if (FFBPacketHandler.EffectReport.TrigerBtn == byte.MaxValue)
             effectParameters.TriggerButton = -1;
-        effectParameters.TriggerRepeatInterval = (int)FFBPacketHandler.EffectReport.TrigerRpt;
+        effectParameters.TriggerRepeatInterval = FFBPacketHandler.EffectReport.TrigerRpt;
         FFB.SineEffect.SetParameters(effectParameters, EffectParameterFlags.TypeSpecificParameters);
         if (FFB.SineEffect.Status != EffectStatus.Playing)
             FFB.SineEffect.Start();
@@ -354,11 +354,11 @@ internal class FFB
     private static void SendCondition(Joystick FFBDevice)
     {
         Guid effectGuid = new Guid();
-        TypeSpecificParameters specificParameters = (TypeSpecificParameters)new ConditionSet();
+        TypeSpecificParameters specificParameters = new ConditionSet();
         specificParameters.As<ConditionSet>().Conditions = new SharpDX.DirectInput.Condition[1];
         specificParameters.As<ConditionSet>().Conditions[0].DeadBand = FFBPacketHandler.ConditionalReport.DeadBand;
         specificParameters.As<ConditionSet>().Conditions[0].Offset =
-            (int)FFBPacketHandler.ConditionalReport.CenterPointOffset;
+            FFBPacketHandler.ConditionalReport.CenterPointOffset;
         float num1 = 1f;
         float num2 = 1f;
         if (FFBPacketHandler.EffectReport.EffectType.ToString() == "ET_DMPR")
@@ -372,10 +372,10 @@ internal class FFB
             num2 = FFB.SpringSaturation;
         }
 
-        int num3 = (int)Math.Round((double)FFBPacketHandler.ConditionalReport.PosCoeff * (double)num1, 0);
-        int num4 = (int)Math.Round((double)FFBPacketHandler.ConditionalReport.NegCoeff * (double)num1, 0);
-        int num5 = (int)Math.Round((double)FFBPacketHandler.ConditionalReport.PosSatur * (double)num2, 0);
-        int num6 = (int)Math.Round((double)FFBPacketHandler.ConditionalReport.NegSatur * (double)num2, 0);
+        int num3 = (int)Math.Round(FFBPacketHandler.ConditionalReport.PosCoeff * (double)num1, 0);
+        int num4 = (int)Math.Round(FFBPacketHandler.ConditionalReport.NegCoeff * (double)num1, 0);
+        int num5 = (int)Math.Round(FFBPacketHandler.ConditionalReport.PosSatur * (double)num2, 0);
+        int num6 = (int)Math.Round(FFBPacketHandler.ConditionalReport.NegSatur * (double)num2, 0);
         if (num5 > 10000)
             num5 = 10000;
         if (num6 > 10000)
@@ -389,32 +389,32 @@ internal class FFB
             Parameters = specificParameters
         };
         effectGuid = FFB.EffectDictionary
-            .Where<KeyValuePair<string, Guid>>((Func<KeyValuePair<string, Guid>, bool>)(x =>
-                x.Key == FFBPacketHandler.EffectReport.EffectType.ToString()))
-            .Select<KeyValuePair<string, Guid>, Guid>((Func<KeyValuePair<string, Guid>, Guid>)(x => x.Value))
+            .Where<KeyValuePair<string, Guid>>(x =>
+                x.Key == FFBPacketHandler.EffectReport.EffectType.ToString())
+            .Select<KeyValuePair<string, Guid>, Guid>(x => x.Value)
             .First<Guid>();
         Effect effect = new Effect(FFBDevice.CreatedEffects
-            .Where<Effect>((Func<Effect, bool>)(x => x.Guid == effectGuid))
-            .Select<Effect, IntPtr>((Func<Effect, IntPtr>)(x => x.NativePointer)).First<IntPtr>());
+            .Where<Effect>(x => x.Guid == effectGuid)
+            .Select<Effect, IntPtr>(x => x.NativePointer).First<IntPtr>());
         int[] axes = new int[1] { FFB.ActuatorsObjectTypes[0] };
         int[] directions = new int[1]
         {
-            (int)FFBPacketHandler.EffectReport.Direction
+            FFBPacketHandler.EffectReport.Direction
         };
-        effectParameters.Duration = (int)FFBPacketHandler.EffectReport.Duration * 1000;
+        effectParameters.Duration = FFBPacketHandler.EffectReport.Duration * 1000;
         if (FFBPacketHandler.EffectReport.Duration == ushort.MaxValue ||
-            FFBPacketHandler.EffectReport.Duration == (ushort)0)
+            FFBPacketHandler.EffectReport.Duration == 0)
             effectParameters.Duration = -1;
         effectParameters.Flags = EffectFlags.ObjectIds | EffectFlags.Cartesian;
         effectParameters.Gain =
-            (int)Math.Round((double)FFBPacketHandler.EffectReport.Gain / (double)byte.MaxValue * 10000.0, 0);
+            (int)Math.Round(FFBPacketHandler.EffectReport.Gain / (double)byte.MaxValue * 10000.0, 0);
         effectParameters.SetAxes(axes, directions);
         effectParameters.StartDelay = 0;
-        effectParameters.SamplePeriod = (int)FFBPacketHandler.EffectReport.SamplePrd;
-        effectParameters.TriggerButton = (int)FFBPacketHandler.EffectReport.TrigerBtn;
+        effectParameters.SamplePeriod = FFBPacketHandler.EffectReport.SamplePrd;
+        effectParameters.TriggerButton = FFBPacketHandler.EffectReport.TrigerBtn;
         if (FFBPacketHandler.EffectReport.TrigerBtn == byte.MaxValue)
             effectParameters.TriggerButton = -1;
-        effectParameters.TriggerRepeatInterval = (int)FFBPacketHandler.EffectReport.TrigerRpt;
+        effectParameters.TriggerRepeatInterval = FFBPacketHandler.EffectReport.TrigerRpt;
         if (FFBPacketHandler.EffectReport.EffectType.ToString() == "ET_DMPR")
         {
             FFB.DamperEffect.SetParameters(effectParameters, EffectParameterFlags.TypeSpecificParameters);
