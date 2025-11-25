@@ -7,6 +7,7 @@
 using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
@@ -45,49 +46,77 @@ internal class Feeder
         this.ResetVJoyState();
         try
         {
-            foreach (var controller in controllers)
-                controller.Acquire();
             this.Poll(controllers, outputMapping, token);
         }
         finally
         {
             VJoyDevice.Joystick.RelinquishVJD(VJoyDevice.ID);
             foreach (var controller in controllers)
+            {
                 controller.Unacquire();
+                controller.SetNotification(null);
+            }
         }
+    }
+
+    private WaitHandle[] GetWaitHandles(List<Joystick> controllers, CancellationToken token)
+    {
+        var waitHandles = new List<WaitHandle>();
+        foreach (var controller in controllers)
+        {
+            AutoResetEvent waitHandle = new AutoResetEvent(false);
+            controller.SetNotification(waitHandle);
+            waitHandles.Add(waitHandle);
+        }
+
+        waitHandles.Add(token.WaitHandle);
+        return waitHandles.ToArray();
     }
 
     private void Poll(List<Joystick> controllers, ControllerMapping mapping, CancellationToken token)
     {
+        var waitHandles = this.GetWaitHandles(controllers, token);
+        
+        ControllerState = new List<JoystickState>();
+        foreach (var controller in controllers)
+        {
+            controller.Acquire();
+            ControllerState.Add(controller.GetCurrentState());
+        }
+
+        this.FeedData(ControllerState, mapping);
+
         Feeder.SteeringState = -1;
         while (!token.IsCancellationRequested)
         {
-            Feeder.ControllerState = new List<JoystickState>();
-            foreach (Joystick controller in controllers)
+            var index = WaitHandle.WaitAny(waitHandles);
+            if (index >= controllers.Count)
             {
-                try
-                {
-                    controller.Poll();
-                    Feeder.ControllerState.Add(controller.GetCurrentState());
-                }
-                catch
-                {
-                    ConsoleMsg msg = ConsoleMsg.Msg;
-                    msg.Message =
-                        $"{msg.Message}[ERROR] Could not poll device '{controller.Information.InstanceName}'. Forza EmuWheel has stopped...{Environment.NewLine}";
-                    ConsoleMsg.Msg.StopIsEnabled = false;
-                    ConsoleMsg.Msg.StartIsEnabled = false;
-                    FFB.StopFFB = true;
-                    return;
-                }
+                // cancellation requested
+                break;
             }
 
-            this.FeedData(Feeder.ControllerState, mapping);
-            Thread.Sleep(1);
+            var controller = controllers[index];
+            try
+            {
+                controller.Poll();
+                ControllerState[index] = controller.GetCurrentState();
+                this.FeedData(Feeder.ControllerState, mapping);
+            }
+            catch
+            {
+                ConsoleMsg msg = ConsoleMsg.Msg;
+                msg.Message =
+                    $"{msg.Message}[ERROR] Could not poll device '{controller.Information.InstanceName}'. Forza EmuWheel has stopped...{Environment.NewLine}";
+                ConsoleMsg.Msg.StopIsEnabled = false;
+                ConsoleMsg.Msg.StartIsEnabled = false;
+                FFB.StopFFB = true;
+                return;
+            }
         }
     }
 
-    public void FeedData(List<JoystickState> data, ControllerMapping mapping)
+    private void FeedData(List<JoystickState> data, ControllerMapping mapping)
     {
         if (mapping.Steering != null)
         {
@@ -262,6 +291,7 @@ internal class Feeder
         {
             return;
         }
+
         VJoyDevice.Joystick.UpdateVJD(VJoyDevice.ID, ref VJoyDevice.IReport);
     }
 }
