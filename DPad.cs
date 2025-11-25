@@ -9,5 +9,5 @@ namespace Forza_EmuWheel;
 
 public class DPad
 {
-  public int Index { get; set; }
+    public int Index { get; set; }
 }

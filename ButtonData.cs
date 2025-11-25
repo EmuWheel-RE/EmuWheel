@@ -9,9 +9,9 @@ namespace Forza_EmuWheel;
 
 internal class ButtonData
 {
-  public int ControllerIndex { get; set; }
+    public int ControllerIndex { get; set; }
 
-  public int ButtonIndex { get; set; }
+    public int ButtonIndex { get; set; }
 
-  public int ButtonBind { get; set; }
+    public int ButtonBind { get; set; }
 }

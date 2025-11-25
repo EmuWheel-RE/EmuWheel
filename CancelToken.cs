@@ -11,5 +11,5 @@ namespace Forza_EmuWheel;
 
 public class CancelToken
 {
-  public static CancellationTokenSource tokenSource = new CancellationTokenSource();
+    public static CancellationTokenSource tokenSource = new CancellationTokenSource();
 }

@@ -11,48 +11,48 @@ namespace Forza_EmuWheel;
 
 internal class ConsoleMsg : INotifyPropertyChanged
 {
-  private string message;
-  public static ConsoleMsg Msg = new ConsoleMsg();
-  private bool stopIsEnabled;
-  private bool startIsEnabled;
+    private string message;
+    public static ConsoleMsg Msg = new ConsoleMsg();
+    private bool stopIsEnabled;
+    private bool startIsEnabled;
 
-  public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler PropertyChanged;
 
-  public bool StopIsEnabled
-  {
-    get => this.stopIsEnabled;
-    set
+    public bool StopIsEnabled
     {
-      this.stopIsEnabled = value;
-      this.OnPropertyChanged(nameof (StopIsEnabled));
+        get => this.stopIsEnabled;
+        set
+        {
+            this.stopIsEnabled = value;
+            this.OnPropertyChanged(nameof(StopIsEnabled));
+        }
     }
-  }
 
-  public bool StartIsEnabled
-  {
-    get => this.startIsEnabled;
-    set
+    public bool StartIsEnabled
     {
-      this.startIsEnabled = value;
-      this.OnPropertyChanged(nameof (StartIsEnabled));
+        get => this.startIsEnabled;
+        set
+        {
+            this.startIsEnabled = value;
+            this.OnPropertyChanged(nameof(StartIsEnabled));
+        }
     }
-  }
 
-  public string Message
-  {
-    get => this.message;
-    set
+    public string Message
     {
-      this.message = value;
-      this.OnPropertyChanged(nameof (Message));
+        get => this.message;
+        set
+        {
+            this.message = value;
+            this.OnPropertyChanged(nameof(Message));
+        }
     }
-  }
 
-  protected void OnPropertyChanged(string value)
-  {
-    PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-    if (propertyChanged == null)
-      return;
-    propertyChanged((object) this, new PropertyChangedEventArgs(value));
-  }
+    protected void OnPropertyChanged(string value)
+    {
+        PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+        if (propertyChanged == null)
+            return;
+        propertyChanged((object)this, new PropertyChangedEventArgs(value));
+    }
 }

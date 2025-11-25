@@ -9,23 +9,23 @@ namespace Forza_EmuWheel;
 
 public class Axis
 {
-  public string Id { get; set; }
+    public string Id { get; set; }
 
-  public int AxisIndex { get; set; }
+    public int AxisIndex { get; set; }
 
-  public int Inverted { get; set; }
+    public int Inverted { get; set; }
 
-  public float Deadzone { get; set; }
+    public float Deadzone { get; set; }
 
-  public enum AxisEnum
-  {
-    X,
-    Y,
-    Z,
-    RotationX,
-    RotationY,
-    RotationZ,
-    Sliders0,
-    Sliders1,
-  }
+    public enum AxisEnum
+    {
+        X,
+        Y,
+        Z,
+        RotationX,
+        RotationY,
+        RotationZ,
+        Sliders0,
+        Sliders1,
+    }
 }

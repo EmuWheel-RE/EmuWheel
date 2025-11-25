@@ -6,17 +6,17 @@
         xmlns:local="clr-namespace:Forza_EmuWheel"
         Closing="OnApplicationExit" Title="Forza EmuWheel v1.3.2" Height="350" Width="525"
         ResizeMode="CanMinimize">
-  <Grid>
-    <Button Click="Start_Click" x:Name="Start" Content="Start" Margin="306,251,0,0" VerticalAlignment="Top"
-            HorizontalAlignment="Left" Width="75" VerticalContentAlignment="Top"
-            RenderTransformOrigin="0.48,-0.2"
-            IsEnabled="{Binding StartIsEnabled, UpdateSourceTrigger=PropertyChanged}"/>
-    <TextBox TextChanged="Console_TextChanged" x:Name="console" Margin="41,24,41,0" TextWrapping="Wrap"
-             VerticalAlignment="Top" Height="209" VerticalScrollBarVisibility="Visible" BorderThickness="1"
-             SelectionBrush="Black" BorderBrush="Black" CaretBrush="Black" FontSize="10"
-             Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"/>
-    <Button Click="Stop_Click" x:Name="Stop" Content="Stop" Margin="0,251,41,0" VerticalAlignment="Top"
-            VerticalContentAlignment="Top" RenderTransformOrigin="0.48,-0.2" HorizontalAlignment="Right"
-            Width="75" IsEnabled="{Binding StopIsEnabled, UpdateSourceTrigger=PropertyChanged}"/>
-  </Grid>
+    <Grid>
+        <Button Click="Start_Click" x:Name="Start" Content="Start" Margin="306,251,0,0" VerticalAlignment="Top"
+                HorizontalAlignment="Left" Width="75" VerticalContentAlignment="Top"
+                RenderTransformOrigin="0.48,-0.2"
+                IsEnabled="{Binding StartIsEnabled, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox TextChanged="Console_TextChanged" x:Name="console" Margin="41,24,41,0" TextWrapping="Wrap"
+                 VerticalAlignment="Top" Height="209" VerticalScrollBarVisibility="Visible" BorderThickness="1"
+                 SelectionBrush="Black" BorderBrush="Black" CaretBrush="Black" FontSize="10"
+                 Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}" />
+        <Button Click="Stop_Click" x:Name="Stop" Content="Stop" Margin="0,251,41,0" VerticalAlignment="Top"
+                VerticalContentAlignment="Top" RenderTransformOrigin="0.48,-0.2" HorizontalAlignment="Right"
+                Width="75" IsEnabled="{Binding StopIsEnabled, UpdateSourceTrigger=PropertyChanged}" />
+    </Grid>
 </Window>

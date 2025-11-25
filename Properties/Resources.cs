@@ -19,28 +19,29 @@ namespace Forza_EmuWheel.Properties;
 [CompilerGenerated]
 internal class Resources
 {
-  private static ResourceManager resourceMan;
-  private static CultureInfo resourceCulture;
+    private static ResourceManager resourceMan;
+    private static CultureInfo resourceCulture;
 
-  internal Resources()
-  {
-  }
-
-  [EditorBrowsable(EditorBrowsableState.Advanced)]
-  internal static ResourceManager ResourceManager
-  {
-    get
+    internal Resources()
     {
-      if (Forza_EmuWheel.Properties.Resources.resourceMan == null)
-        Forza_EmuWheel.Properties.Resources.resourceMan = new ResourceManager("Forza_EmuWheel.Properties.Resources", typeof (Forza_EmuWheel.Properties.Resources).Assembly);
-      return Forza_EmuWheel.Properties.Resources.resourceMan;
     }
-  }
 
-  [EditorBrowsable(EditorBrowsableState.Advanced)]
-  internal static CultureInfo Culture
-  {
-    get => Forza_EmuWheel.Properties.Resources.resourceCulture;
-    set => Forza_EmuWheel.Properties.Resources.resourceCulture = value;
-  }
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    internal static ResourceManager ResourceManager
+    {
+        get
+        {
+            if (Forza_EmuWheel.Properties.Resources.resourceMan == null)
+                Forza_EmuWheel.Properties.Resources.resourceMan = new ResourceManager(
+                    "Forza_EmuWheel.Properties.Resources", typeof(Forza_EmuWheel.Properties.Resources).Assembly);
+            return Forza_EmuWheel.Properties.Resources.resourceMan;
+        }
+    }
+
+    [EditorBrowsable(EditorBrowsableState.Advanced)]
+    internal static CultureInfo Culture
+    {
+        get => Forza_EmuWheel.Properties.Resources.resourceCulture;
+        set => Forza_EmuWheel.Properties.Resources.resourceCulture = value;
+    }
 }

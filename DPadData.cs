@@ -9,7 +9,7 @@ namespace Forza_EmuWheel;
 
 internal class DPadData
 {
-  public int ControllerIndex { get; set; }
+    public int ControllerIndex { get; set; }
 
-  public int DPadIndex { get; set; }
+    public int DPadIndex { get; set; }
 }

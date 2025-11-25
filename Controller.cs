@@ -14,35 +14,35 @@ namespace Forza_EmuWheel;
 
 public class Controller
 {
-  public Guid ProductGuid { get; set; }
+    public Guid ProductGuid { get; set; }
 
-  public Guid InstanceGuid { get; set; }
+    public Guid InstanceGuid { get; set; }
 
-  public string InstanceName { get; set; }
+    public string InstanceName { get; set; }
 
-  public string ProductName { get; set; }
+    public string ProductName { get; set; }
 
-  public List<Axis> Axes { get; set; }
+    public List<Axis> Axes { get; set; }
 
-  public List<Button> Buttons { get; set; }
+    public List<Button> Buttons { get; set; }
 
-  public DPad DPad { get; set; }
+    public DPad DPad { get; set; }
 
-  public FFBParams FFBParameters { get; set; }
+    public FFBParams FFBParameters { get; set; }
 
-  public static List<Controller> GetConfigurationData()
-  {
-    if (!File.Exists("configuration.json"))
-      return (List<Controller>) null;
-    try
+    public static List<Controller> GetConfigurationData()
     {
-      return JsonConvert.DeserializeObject<List<Controller>>(File.ReadAllText("configuration.json"));
+        if (!File.Exists("configuration.json"))
+            return (List<Controller>)null;
+        try
+        {
+            return JsonConvert.DeserializeObject<List<Controller>>(File.ReadAllText("configuration.json"));
+        }
+        catch (Exception ex)
+        {
+            ConsoleMsg msg = ConsoleMsg.Msg;
+            msg.Message = $"{msg.Message}[ERROR] {ex.Message}{Environment.NewLine}";
+            return (List<Controller>)null;
+        }
     }
-    catch (Exception ex)
-    {
-      ConsoleMsg msg = ConsoleMsg.Msg;
-      msg.Message = $"{msg.Message}[ERROR] {ex.Message}{Environment.NewLine}";
-      return (List<Controller>) null;
-    }
-  }
 }

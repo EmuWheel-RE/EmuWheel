@@ -11,23 +11,23 @@ namespace Forza_EmuWheel;
 
 internal class FFBData
 {
-  public vJoy.FFB_EFF_REPORT EffectReport { get; set; }
+    public vJoy.FFB_EFF_REPORT EffectReport { get; set; }
 
-  public vJoy.FFB_EFF_ENVLP EnvelopeReport { get; set; }
+    public vJoy.FFB_EFF_ENVLP EnvelopeReport { get; set; }
 
-  public vJoy.FFB_EFF_COND ConditionalReport { get; set; }
+    public vJoy.FFB_EFF_COND ConditionalReport { get; set; }
 
-  public vJoy.FFB_EFF_PERIOD PeriodicReport { get; set; }
+    public vJoy.FFB_EFF_PERIOD PeriodicReport { get; set; }
 
-  public vJoy.FFB_EFF_CONSTANT ConstantForceReport { get; set; }
+    public vJoy.FFB_EFF_CONSTANT ConstantForceReport { get; set; }
 
-  public vJoy.FFB_EFF_RAMP RampForceReport { get; set; }
+    public vJoy.FFB_EFF_RAMP RampForceReport { get; set; }
 
-  public vJoy.FFB_EFF_OP Op { get; set; }
+    public vJoy.FFB_EFF_OP Op { get; set; }
 
-  public FFB_CTRL Control { get; set; }
+    public FFB_CTRL Control { get; set; }
 
-  public byte Gain { get; set; }
+    public byte Gain { get; set; }
 
-  public string PacketType { get; set; }
+    public string PacketType { get; set; }
 }

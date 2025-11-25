@@ -11,5 +11,5 @@ namespace Forza_EmuWheel;
 
 internal class FFBEventArgs : EventArgs
 {
-  public FFBData Data { get; set; }
+    public FFBData Data { get; set; }
 }

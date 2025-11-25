@@ -9,62 +9,62 @@ namespace Forza_EmuWheel;
 
 public class FFBParams
 {
-  public FFBParams.Constant Const { get; set; }
+    public FFBParams.Constant Const { get; set; }
 
-  public FFBParams.Periodic Sine { get; set; }
+    public FFBParams.Periodic Sine { get; set; }
 
-  public FFBParams.Condition Spring { get; set; }
+    public FFBParams.Condition Spring { get; set; }
 
-  public FFBParams.Condition Damper { get; set; }
+    public FFBParams.Condition Damper { get; set; }
 
-  public class Constant
-  {
-    public float Magnitude { get; set; }
-
-    public float MaximumForce { get; set; }
-
-    public float MinimumForce { get; set; }
-
-    public float FilterThreshold { get; set; }
-
-    public float MinimumCoefficient { get; set; }
-  }
-
-  public class Periodic
-  {
-    public float Magnitude { get; set; }
-
-    public float Frequency { get; set; }
-
-    public float MaximumForce { get; set; }
-
-    public float MinimumForce { get; set; }
-
-    public float Phase { get; set; }
-
-    public FFBParams.Periodic.EngineVibration EngineVibrations { get; set; }
-
-    public FFBParams.Periodic.GearShiftVibration GearShiftVibrations { get; set; }
-
-    public class EngineVibration
+    public class Constant
     {
-      public float Frequency { get; set; }
+        public float Magnitude { get; set; }
 
-      public float Strength { get; set; }
+        public float MaximumForce { get; set; }
+
+        public float MinimumForce { get; set; }
+
+        public float FilterThreshold { get; set; }
+
+        public float MinimumCoefficient { get; set; }
     }
 
-    public class GearShiftVibration
+    public class Periodic
     {
-      public float Frequency { get; set; }
+        public float Magnitude { get; set; }
 
-      public float Strength { get; set; }
+        public float Frequency { get; set; }
+
+        public float MaximumForce { get; set; }
+
+        public float MinimumForce { get; set; }
+
+        public float Phase { get; set; }
+
+        public FFBParams.Periodic.EngineVibration EngineVibrations { get; set; }
+
+        public FFBParams.Periodic.GearShiftVibration GearShiftVibrations { get; set; }
+
+        public class EngineVibration
+        {
+            public float Frequency { get; set; }
+
+            public float Strength { get; set; }
+        }
+
+        public class GearShiftVibration
+        {
+            public float Frequency { get; set; }
+
+            public float Strength { get; set; }
+        }
     }
-  }
 
-  public class Condition
-  {
-    public float Coefficient { get; set; }
+    public class Condition
+    {
+        public float Coefficient { get; set; }
 
-    public float Saturation { get; set; }
-  }
+        public float Saturation { get; set; }
+    }
 }

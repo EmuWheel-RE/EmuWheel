@@ -9,19 +9,19 @@ namespace Forza_EmuWheel;
 
 internal class ControllerMapping
 {
-  public AxisData Steering { get; set; }
+    public AxisData Steering { get; set; }
 
-  public AxisData Combined { get; set; }
+    public AxisData Combined { get; set; }
 
-  public AxisData Throttle { get; set; }
+    public AxisData Throttle { get; set; }
 
-  public AxisData Brake { get; set; }
+    public AxisData Brake { get; set; }
 
-  public AxisData Clutch { get; set; }
+    public AxisData Clutch { get; set; }
 
-  public AxisData Handbrake { get; set; }
+    public AxisData Handbrake { get; set; }
 
-  public ButtonData[] Buttons { get; set; }
+    public ButtonData[] Buttons { get; set; }
 
-  public DPadData DPad { get; set; }
+    public DPadData DPad { get; set; }
 }

@@ -9,11 +9,11 @@ namespace Forza_EmuWheel;
 
 internal class AxisData
 {
-  public int ControllerIndex { get; set; }
+    public int ControllerIndex { get; set; }
 
-  public int AxisIndex { get; set; }
+    public int AxisIndex { get; set; }
 
-  public int Inverted { get; set; }
+    public int Inverted { get; set; }
 
-  public float Deadzone { get; set; }
+    public float Deadzone { get; set; }
 }
