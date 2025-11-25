@@ -1,0 +1,8 @@
+.idea/
+obj/
+packages/
+bin/
+*.dll
+*.pdb
+*.exe
+*.user
