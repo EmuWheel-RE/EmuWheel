@@ -29,5 +29,5 @@ internal class FFBData
 
     public byte Gain { get; set; }
 
-    public string PacketType { get; set; }
+    public FFBPType PacketType { get; set; }
 }

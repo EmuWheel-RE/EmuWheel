@@ -142,7 +142,7 @@ internal class FFBPacketHandler
                 break;
         }
 
-        FFBDataUnit.PacketType = PacketType.ToString();
+        FFBDataUnit.PacketType = PacketType;
         ffbEventArgs.Data = FFBDataUnit;
         FFB.SendFFBData();
         callback(ffbEventArgs);
