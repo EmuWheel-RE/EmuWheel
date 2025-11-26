@@ -9,14 +9,16 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v5
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '4.7'
+      shell: pwsh
+      run: |
+        winget install Microsoft.DotNet.Framework.DeveloperPack_4 `
+        --version 4.7 `
+        --disable-interactivity --accept-source-agreements --accept-package-agreements
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
