@@ -1,104 +1,50 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!--Project was exported from assembly: C:\Users\fred\Downloads\forza_emuwheel_v1.4a\Forza EmuWheel.exe-->
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{822C2832-0E42-4164-8BF2-6BA167D208B6}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AssemblyName>Forza EmuWheel</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFramework>net47</TargetFramework>
     <ApplicationVersion>1.3.1.0</ApplicationVersion>
-    <FileAlignment>512</FileAlignment>
     <RootNamespace>Forza_EmuWheel</RootNamespace>
     <LangVersion>10</LangVersion>
     <Nullable>enable</Nullable>
     <ApplicationIcon>forzaemu_darkgray3.ico</ApplicationIcon>
+    <AssemblyTitle>Forza EmuWheel</AssemblyTitle>
+    <Product>Forza EmuWheel</Product>
+    <Copyright>Copyright © FirstPlatoLV 2017</Copyright>
+    <AssemblyVersion>1.3.1.0</AssemblyVersion>
+    <FileVersion>1.3.1.0</FileVersion>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+    <UseWPF>true</UseWPF>
+    <Platform>AnyCPU</Platform>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+  <PropertyGroup Condition="'$(Configuration)' == 'Release' ">
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-    <DebugSymbols>true</DebugSymbols>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug' ">
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="SharpDX, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>packages\SharpDX.4.0.1\lib\net45\SharpDX.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.DirectInput, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>packages\SharpDX.DirectInput.4.0.1\lib\net45\SharpDX.DirectInput.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
-  <ItemGroup Condition="'$(Platform)' == 'x64'">
-    <Reference Include="vJoyInterfaceWrap">
-      <HintPath>packages\vJoyInterface.0.2.1.6\runtimes\win-x64\lib\net20\vJoyInterfaceWrap.dll</HintPath>
-    </Reference>
-  </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConsoleMsg.cs" />
-    <Compile Include="Controller.cs" />
-    <Compile Include="Axis.cs" />
-    <Compile Include="Button.cs" />
-    <Compile Include="DPad.cs" />
-    <Compile Include="FeederTask.cs" />
-    <Compile Include="FFBParams.cs" />
-    <Compile Include="Feeder.cs" />
-    <Compile Include="InputCollector.cs" />
-    <Compile Include="ControllerMapping.cs" />
-    <Compile Include="AxisData.cs" />
-    <Compile Include="ButtonData.cs" />
-    <Compile Include="DPadData.cs" />
-    <Compile Include="Utils.cs" />
-    <Compile Include="VJoyDevice.cs" />
-    <Compile Include="App.cs" />
-    <Compile Include="FFB.cs" />
-    <Compile Include="FFBEventArgs.cs" />
-    <Compile Include="FFBData.cs" />
-    <Compile Include="FFBPacketHandler.cs" />
-    <Compile Include="Properties\Resources.cs" />
-    <Compile Include="Properties\Settings.cs" />
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Update="MainWindow.xaml.cs">
       <DependentUpon>mainwindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="forzaemu_darkgray3.ico" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="SharpDX" Version="4.0.1" />
+    <PackageReference Include="SharpDX.DirectInput" Version="4.0.1" />
+    <PackageReference Include="vJoyInterface" Version="0.2.1.6" />
   </ItemGroup>
-  <ItemGroup>
-    <Page Include="mainwindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
