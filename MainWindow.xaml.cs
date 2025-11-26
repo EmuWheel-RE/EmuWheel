@@ -19,32 +19,35 @@ public partial class MainWindow : Window, IComponentConnector
 {
   private const string VJoyProductGuid = "bead1234000000000000504944564944";
 
-  private static SharpDX.DirectInput.DirectInput DI { get; set; }
-
-  private IntPtr MainWindowHandle { get; set; }
-
-  private FeederTask? FeederTask;
+  private IntPtr _mainWindowHandle;
+  private FeederTask? _feederTask;
   private FFB? _ffb;
+  private SharpDX.DirectInput.DirectInput? _directInput;
+
 
   public MainWindow()
   {
     this.InitializeComponent();
     this.DataContext = (object) ConsoleMsg.Msg;
     this.Loaded += new RoutedEventHandler(this.OnLoaded);
+    
   }
 
   private void OnLoaded(object sender, RoutedEventArgs e)
   {
     try
     {
-      MainWindow.DI = new SharpDX.DirectInput.DirectInput();
-      this.MainWindowHandle = new WindowInteropHelper((Window) this).Handle;
-      if (MainWindow.DI == null)
-      {
-        ConsoleMsg msg = ConsoleMsg.Msg;
-        msg.Message = $"{msg.Message}[ERROR] Could not initialize DirectInput.{Environment.NewLine}";
-      }
-      else if (!VJoyDevice.InitializeVJoy())
+      _directInput = new SharpDX.DirectInput.DirectInput();
+    }
+    catch (Exception)
+    {
+      ConsoleMsg.Msg.Append("[ERROR] Could not initialize DirectInput");
+      return;
+    }
+
+    try {
+      _mainWindowHandle = new WindowInteropHelper(this).Handle;
+      if (!VJoyDevice.InitializeVJoy())
       {
         ConsoleMsg msg = ConsoleMsg.Msg;
         msg.Message = $"{msg.Message}[ERROR] Could not initialize vJoy.{Environment.NewLine}";
@@ -117,6 +120,8 @@ public partial class MainWindow : Window, IComponentConnector
 
   private bool GetGameControllers()
   {
+    if (_directInput == null)
+      return false;
     Guid guid = Guid.Parse("bead1234000000000000504944564944");
     InputCollector.Controllers = Controller.GetConfigurationData();
     if (InputCollector.Controllers == null)
@@ -126,7 +131,7 @@ public partial class MainWindow : Window, IComponentConnector
       return false;
     }
     InputCollector.GameControllers = new List<Joystick>();
-    foreach (DeviceInstance device1 in (IEnumerable<DeviceInstance>) MainWindow.DI.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly))
+    foreach (DeviceInstance device1 in (IEnumerable<DeviceInstance>) _directInput.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly))
     {
       DeviceInstance device = device1;
       if (!(device.ProductGuid == guid))
@@ -135,9 +140,9 @@ public partial class MainWindow : Window, IComponentConnector
         {
           if (InputCollector.Controllers.Where<Controller>((Func<Controller, bool>) (x => x.InstanceGuid == device.InstanceGuid)).Any<Controller>())
           {
-            Joystick joystick = new Joystick(MainWindow.DI, device.InstanceGuid);
+            Joystick joystick = new Joystick(_directInput, device.InstanceGuid);
             if (InputCollector.Controllers.Where<Controller>((Func<Controller, bool>) (x => x.InstanceGuid == device.InstanceGuid && x.FFBParameters != null)).Any<Controller>())
-              joystick.SetCooperativeLevel(this.MainWindowHandle, CooperativeLevel.Exclusive | CooperativeLevel.Background);
+              joystick.SetCooperativeLevel(this._mainWindowHandle, CooperativeLevel.Exclusive | CooperativeLevel.Background);
             InputCollector.GameControllers.Add(joystick);
             ConsoleMsg msg = ConsoleMsg.Msg;
             msg.Message = $"{msg.Message}[INFO] Found game controller '{joystick.Information.InstanceName.ToString()}'.{Environment.NewLine}";
@@ -186,7 +191,7 @@ public partial class MainWindow : Window, IComponentConnector
     msg.Message = $"{msg.Message}[INFO] Forza EmuWheel is running...{Environment.NewLine}";
     ConsoleMsg.Msg.StartIsEnabled = false;
     ConsoleMsg.Msg.StopIsEnabled = true;
-    this.FeederTask = new FeederTask();
+    this._feederTask = new FeederTask();
   }
 
   private void Stop_Click(object sender, RoutedEventArgs e)
@@ -195,12 +200,12 @@ public partial class MainWindow : Window, IComponentConnector
     msg.Message = $"{msg.Message}[INFO] Forza EmuWheel was stopped.{Environment.NewLine}";
     ConsoleMsg.Msg.StartIsEnabled = true;
     ConsoleMsg.Msg.StopIsEnabled = false;
-    this.FeederTask?.CancelAndWait();
-    this.FeederTask = null;
+    this._feederTask?.CancelAndWait();
+    this._feederTask = null;
   }
 
   private void OnApplicationExit(object sender, EventArgs e)
   {
-    this.FeederTask?.CancelAndWait();
+    this._feederTask?.CancelAndWait();
   }
 }
