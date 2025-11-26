@@ -50,6 +50,7 @@ internal class Feeder
         }
         finally
         {
+            FFB.Stop();
             VJoyDevice.Joystick.RelinquishVJD(VJoyDevice.ID);
             foreach (var controller in controllers)
             {
@@ -83,6 +84,16 @@ internal class Feeder
             controller.Acquire();
             ControllerState.Add(controller.GetCurrentState());
         }
+        
+        
+        if (FFB.Start())
+        {
+            ConsoleMsg.Msg.Append("[SUCCESS] Force feedback is enabled.");
+        }
+        else
+        {
+            ConsoleMsg.Msg.Append("[INFO] Device does not appear to be FFB capable. FFB is disabled!");
+        }
 
         this.FeedData(ControllerState, mapping);
 
@@ -105,12 +116,11 @@ internal class Feeder
             }
             catch
             {
-                ConsoleMsg msg = ConsoleMsg.Msg;
-                msg.Message =
-                    $"{msg.Message}[ERROR] Could not poll device '{controller.Information.InstanceName}'. Forza EmuWheel has stopped...{Environment.NewLine}";
+                ConsoleMsg.Msg.Append(
+                    $"[ERROR] Could not poll device '{controller.Information.InstanceName}'. Forza EmuWheel has stopped...");
                 ConsoleMsg.Msg.StopIsEnabled = false;
                 ConsoleMsg.Msg.StartIsEnabled = false;
-                FFB.StopFFB = true;
+                FFB.Stop();
                 return;
             }
         }

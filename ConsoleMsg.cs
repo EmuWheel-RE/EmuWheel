@@ -4,6 +4,7 @@
 // MVID: 1F67B691-4378-49D8-9752-4B9D9B08BEF0
 // Assembly location: C:\Users\fred\Downloads\forza_emuwheel_v1.4a\Forza EmuWheel.exe
 
+using System;
 using System.ComponentModel;
 
 #nullable disable
@@ -46,6 +47,11 @@ internal class ConsoleMsg : INotifyPropertyChanged
             this.message = value;
             this.OnPropertyChanged(nameof(Message));
         }
+    }
+
+    public void Append(string line)
+    {
+        this.Message += line + Environment.NewLine;
     }
 
     protected void OnPropertyChanged(string value)

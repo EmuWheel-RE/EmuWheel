@@ -24,6 +24,7 @@ public partial class MainWindow : Window, IComponentConnector
   private IntPtr MainWindowHandle { get; set; }
 
   private FeederTask? FeederTask;
+  private FFB? _ffb;
 
   public MainWindow()
   {
@@ -94,16 +95,7 @@ public partial class MainWindow : Window, IComponentConnector
     if (joystick == null)
       return false;
     this.GetActuators((Device) joystick);
-    if (new FFB(joystick).StartFFB(VJoyDevice.Joystick))
-    {
-      ConsoleMsg msg2 = ConsoleMsg.Msg;
-      msg2.Message = $"{msg2.Message}[SUCCESS] Force feedback is enabled.{Environment.NewLine}";
-    }
-    else
-    {
-      ConsoleMsg msg3 = ConsoleMsg.Msg;
-      msg3.Message = $"{msg3.Message}[INFO] Device does not appear to be FFB capable. FFB is disabled!{Environment.NewLine}";
-    }
+    _ffb = new FFB(joystick, VJoyDevice.Joystick);
     return true;
   }
 

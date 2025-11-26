@@ -16,41 +16,50 @@ namespace Forza_EmuWheel;
 
 internal class FFB
 {
-    public static bool StopFFB = false;
-    private FFBPacketHandler PacketHandler;
+    private static bool _active = false;
+    private static bool _loadedEffects = false;
+    private FFBPacketHandler _packetHandler;
 
-    public static Joystick FFBDevice { get; set; }
-
-    public FFB(Joystick device) => FFB.FFBDevice = device;
+    public static Joystick OutputDevice { get; set; }
 
     public event FFB.FFBDataReceiveEventHandler FFBDataReceived;
 
     private void OnFFBDataReceived(FFBEventArgs e)
     {
-        FFB.FFBDataReceiveEventHandler ffbDataReceived = this.FFBDataReceived;
-        if (ffbDataReceived == null)
-            return;
-        ffbDataReceived(this, e);
+        var ffbDataReceived = this.FFBDataReceived;
+        ffbDataReceived?.Invoke(this, e);
     }
 
     public void OnVirtualFFBDataReceived(IntPtr data, object userData)
     {
-        if (FFB.StopFFB)
+        if (!FFB._active)
             return;
-        this.PacketHandler.ProcessFFBPacket(data, userData, this.OnFFBDataReceived,
-            FFB.FFBDevice);
+        this._packetHandler.ProcessFFBPacket(data, userData, this.OnFFBDataReceived,
+            FFB.OutputDevice);
+    }
+
+    public FFB(Joystick output, vJoy input)
+    {
+        OutputDevice = output;
+        this._packetHandler = new FFBPacketHandler(input);
+        object data = new object();
+        input.FfbRegisterGenCB(this.OnVirtualFFBDataReceived, data);
+        _loadedEffects = LoadEffects();
     }
 
     public static List<int> ActuatorsObjectTypes { get; set; }
 
-    public bool StartFFB(vJoy joystick)
+    public static bool Start()
     {
-        if (!FFB.LoadEffects())
+        if (!_loadedEffects)
             return false;
-        this.PacketHandler = new FFBPacketHandler(joystick);
-        object data = new object();
-        joystick.FfbRegisterGenCB(this.OnVirtualFFBDataReceived, data);
+        _active = true;
         return true;
+    }
+
+    public static void Stop()
+    {
+        _active = false;
     }
 
     private static float ConstantMagnitudeMulti { get; set; }
@@ -95,7 +104,7 @@ internal class FFB
         {
             Controller controller = InputCollector.Controllers
                 .Where(x =>
-                    x.InstanceGuid == FFB.FFBDevice.Information.InstanceGuid)
+                    x.InstanceGuid == FFB.OutputDevice?.Information.InstanceGuid)
                 .Select(x => x).First();
             FFB.ConstantMagnitudeMulti = controller.FFBParameters.Const.Magnitude;
             FFB.ConstantGainMulti = controller.FFBParameters.Const.MaximumForce;
@@ -135,12 +144,13 @@ internal class FFB
 
     private static bool LoadEffects()
     {
+        if (OutputDevice == null)
+            return false;
         FFB.LoadSettings();
         try
         {
-            FFB.FFBDev = new Device(FFB.FFBDevice.NativePointer);
+            FFB.FFBDev = new Device(FFB.OutputDevice.NativePointer);
             FFB.FFBDev.Properties.AutoCenter = false;
-            FFB.FFBDev.Acquire();
             EffectParameters parameters = new EffectParameters();
             int[] axes = new int[1] { FFB.ActuatorsObjectTypes[0] };
             int[] directions = new int[1]
@@ -172,7 +182,7 @@ internal class FFB
         {
             ConsoleMsg msg = ConsoleMsg.Msg;
             msg.Message =
-                $"{msg.Message}[ERROR] Could not load Force Feedback effects in memory of  '{FFB.FFBDevice.Information.InstanceName}' {Environment.NewLine}";
+                $"{msg.Message}[ERROR] Could not load Force Feedback effects in memory of  '{FFB.OutputDevice.Information.InstanceName}' {Environment.NewLine}";
             return false;
         }
     }
@@ -414,17 +424,17 @@ internal class FFB
         switch (FFBPacketHandler.Control)
         {
             case FFB_CTRL.CTRL_DEVRST:
-                FFBDevice.SendForceFeedbackCommand(ForceFeedbackCommand.Reset);
+                OutputDevice.SendForceFeedbackCommand(ForceFeedbackCommand.Reset);
                 return;
             case FFB_CTRL.CTRL_STOPALL:
             case FFB_CTRL.CTRL_DISACT:
-                FFBDevice.SendForceFeedbackCommand(ForceFeedbackCommand.StopAll);
+                OutputDevice.SendForceFeedbackCommand(ForceFeedbackCommand.StopAll);
                 return;
             case FFB_CTRL.CTRL_DEVPAUSE:
-                FFBDevice.SendForceFeedbackCommand(ForceFeedbackCommand.Pause);
+                OutputDevice.SendForceFeedbackCommand(ForceFeedbackCommand.Pause);
                 return;
             case FFB_CTRL.CTRL_DEVCONT:
-                FFBDevice.SendForceFeedbackCommand(ForceFeedbackCommand.Continue);
+                OutputDevice.SendForceFeedbackCommand(ForceFeedbackCommand.Continue);
                 return;
         }
     }
