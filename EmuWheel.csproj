@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
     <AssemblyName>Forza EmuWheel</AssemblyName>
     <TargetFramework>net47</TargetFramework>
-    <ApplicationVersion>1.3.1.0</ApplicationVersion>
+    <ApplicationVersion>1.3.2.1</ApplicationVersion>
     <RootNamespace>Forza_EmuWheel</RootNamespace>
     <LangVersion>10</LangVersion>
     <Nullable>enable</Nullable>
@@ -12,8 +12,8 @@
     <AssemblyTitle>Forza EmuWheel</AssemblyTitle>
     <Product>Forza EmuWheel</Product>
     <Copyright>Copyright © FirstPlatoLV 2017</Copyright>
-    <AssemblyVersion>1.3.1.0</AssemblyVersion>
-    <FileVersion>1.3.1.0</FileVersion>
+    <AssemblyVersion>1.3.2.1</AssemblyVersion>
+    <FileVersion>1.3.2.1</FileVersion>
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <UseWPF>true</UseWPF>
     <Platform>AnyCPU</Platform>

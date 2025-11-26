@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Forza_EmuWheel"
-        Closing="OnApplicationExit" Title="Forza EmuWheel v1.3.2" Height="350" Width="525"
+        Closing="OnApplicationExit" Title="Forza EmuWheel v1.3.2.1" Height="350" Width="525"
         ResizeMode="CanMinimize">
     <Grid>
         <Button Click="Start_Click" x:Name="Start" Content="Start" Margin="306,251,0,0" VerticalAlignment="Top"
