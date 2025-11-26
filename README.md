@@ -7,7 +7,7 @@ This repository contains the decompiled source code of the main EmUWheel app, wi
 ## How to use
 
 - Download [Forza EmuWheel](https://forzatools.weebly.com/forza-emuwheel.html)
-- Replace `Forza EmuWheel.exe` with the version from inside the 'Forza-EmuWheel' zip attached to [the latest release](https://github.com/EmuWheel-RE/Forza EmuWheel/releases/latest) - you DO NOT want 'Source code' or the pdb file
+- Replace `Forza EmuWheel.exe` with the version from inside the 'Forza-EmuWheel' zip attached to [the latest release](https://github.com/EmuWheel-RE/EmuWheel/releases/latest) - you DO NOT want 'Source code' or the pdb file
 - Follow [the EmuWheel Setup Guide](https://forzatools.weebly.com/forza-emuwheel-setup-guide.html)
 
 ## LICENSE
