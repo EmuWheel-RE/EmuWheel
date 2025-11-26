@@ -5,12 +5,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forza EmuWheel", "EmuWheel.
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Release|x64 = Release|x64
-		Debug|x64 = Debug|x64
+		Release|AnyCPU = Release|AnyCPU
+		Debug|AnyCPU = Debug|AnyCPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{822C2832-0E42-4164-8BF2-6BA167D208B6}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{822C2832-0E42-4164-8BF2-6BA167D208B6}.Debug|x64.Build.0 = Debug|Any CPU
+		{822C2832-0E42-4164-8BF2-6BA167D208B6}.Debug|AnyCPU.ActiveCfg = Debug|AnyCPU
+		{822C2832-0E42-4164-8BF2-6BA167D208B6}.Debug|AnyCPU.Build.0 = Debug|AnyCPU
+		{822C2832-0E42-4164-8BF2-6BA167D208B6}.Release|AnyCPU.ActiveCfg = Release|AnyCPU
+		{822C2832-0E42-4164-8BF2-6BA167D208B6}.Release|AnyCPU.Build.0 = Release|AnyCPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
